@@ -39,7 +39,7 @@ function Main() {
   }, []);
 
   return (
-    <Tab.Navigator initialRouteName="Exercises">
+    <Tab.Navigator initialRouteName="Create">
       <Tab.Screen
         name="Workouts"
         component={Workouts}

@@ -6,6 +6,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchLocalData } from "../../../redux/actions";
 
+import ImagePicker from "./ImagePicker";
+
 function EditExercise(props) {
   const initialState = {
     id: 0,
@@ -156,6 +158,7 @@ function EditExercise(props) {
           <Button onPress={() => submitForm()} title="Save Exercise" />
         </View>
       </View>
+      <ImagePicker />
     </View>
   );
 }
