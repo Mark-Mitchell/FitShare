@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import DeleteExercise from "./DeleteExercise";
 
@@ -28,31 +28,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
-    // flex: 0.3,
     height: 100,
-    justifyContent: "space-between",
-    // alignItems: "center",
+    // justifyContent: "space-between",
     backgroundColor: "#fff",
     padding: 5,
     margin: 5,
   },
 
   imgContainer: {
-    flex: 1,
+    flexDirection: "row",
+    flex: 1 / 5,
     marginRight: 10,
   },
 
   contentContainer: {
-    flex: 3,
+    flex: 3 / 5,
   },
 
   img: {
-    flex: 1,
-    aspectRatio: 1 / 1,
+    width: "100%",
+    height: "100%",
   },
 
   deleteButtonContainer: {
-    flex: 1,
+    flex: 1 / 5,
   },
 });
 

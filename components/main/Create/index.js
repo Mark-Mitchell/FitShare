@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { Text, SafeAreaView } from "react-native";
 import EditExercise from "./EditExercise";
 
 function Create(props) {
   return (
-    <View>
+    <SafeAreaView>
       <Text>Create</Text>
       <EditExercise navigation={props.navigation} />
-    </View>
+    </SafeAreaView>
   );
 }
 
