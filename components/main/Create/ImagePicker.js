@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Image, View, Platform } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
-function ImagePickerComponent() {
+function ImagePickerComponent(props) {
   // Request Permissions to acces photos on mobile
   useEffect(() => {
     async () => {
@@ -14,8 +14,6 @@ function ImagePickerComponent() {
     };
   }, []);
 
-  const [image, setImage] = useState(null);
-
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -24,19 +22,20 @@ function ImagePickerComponent() {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
-      setImage(result.uri);
+      // set image uri in parent component
+      props.setImage(result.uri);
     }
-    console.log(image);
   };
 
   return (
     <View>
-      <Button title="Image Picker" onPress={pickImage} />
-      {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+      <Button title="Image Picker" onPress={() => pickImage()} />
+      {props.imgURI !== "" && (
+        <Image
+          source={{ uri: props.imgURI }}
+          style={{ width: 200, height: 200 }}
+        />
       )}
     </View>
   );

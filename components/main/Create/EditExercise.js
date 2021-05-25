@@ -158,7 +158,10 @@ function EditExercise(props) {
           <Button onPress={() => submitForm()} title="Save Exercise" />
         </View>
       </View>
-      <ImagePicker />
+      <ImagePicker
+        setImage={(val) => handleInput("imagePath", val)}
+        imgURI={state.imagePath}
+      />
     </View>
   );
 }
