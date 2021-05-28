@@ -23,6 +23,7 @@ function Exercises() {
         description={exercises[exerciseId].description}
         equipment={exercises[exerciseId].equipment}
         time={exercises[exerciseId].time}
+        image={exercises[exerciseId].image}
       />
     );
   });

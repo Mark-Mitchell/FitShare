@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, TextInput, View, StyleSheet } from "react-native";
+import {
+  Button,
+  Text,
+  TextInput,
+  View,
+  StyleSheet,
+  Platform,
+  ScrollView,
+} from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -7,6 +15,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchLocalData } from "../../../redux/actions";
 
 import ImagePicker from "./ImagePicker";
+import * as FileSystem from "expo-file-system";
 
 function EditExercise(props) {
   const initialState = {
@@ -17,7 +26,7 @@ function EditExercise(props) {
     time: "0",
     image: "",
     moreInfo: "",
-    imagePath: "",
+    image: "",
   };
   const [state, setState] = useState(initialState);
 
@@ -42,46 +51,6 @@ function EditExercise(props) {
     }
   }, [state]);
 
-  // setTestData for development on mount
-  useEffect(() => {
-    const setTestData = async () => {
-      try {
-        const testData = JSON.stringify({
-          1: {
-            name: "Name 1",
-            description: "Description 1",
-            equipment: "Bodyweight 1",
-            time: 2,
-            image: "",
-            moreInfo: "",
-          },
-          2: {
-            name: "Name 2",
-            description: "Description 2",
-            equipment: "Bodyweight 2",
-            time: 2,
-            image: "",
-            moreInfo: "",
-          },
-          3: {
-            name: "Name 3",
-            description: "Description 3",
-            equipment: "Bodyweight 3",
-            time: 2,
-            image: "",
-            moreInfo: "",
-          },
-        });
-        AsyncStorage.setItem("exercises", testData);
-        return;
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    setTestData();
-  }, []);
-
   // Handle Submit
   const localExercises = useSelector((state) => state.exercises);
   const dispatch = useDispatch();
@@ -89,13 +58,32 @@ function EditExercise(props) {
     try {
       const id = generateId(localExercises);
 
+      // Save Image locally
+      if (Platform.OS !== "web" && state.image) {
+        try {
+          await FileSystem.copyAsync({
+            from: state.image,
+            to: FileSystem.documentDirectory + "images/" + id,
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      const image =
+        Platform.OS !== "web" && state.image
+          ? FileSystem.documentDirectory + "images/" + id
+          : "";
+
       // Add to Local Storage
       const newExercise = {
         [id]: {
           ...state,
           id,
+          image,
         },
       };
+
       const exercises = {
         ...localExercises,
         ...newExercise,
@@ -120,49 +108,56 @@ function EditExercise(props) {
   };
 
   return (
-    <View>
-      <Text>Create a new Exercise</Text>
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="Name"
-          onChangeText={(value) => handleInput("name", value)}
-          value={state.name}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Description"
-          onChangeText={(value) => handleInput("description", value)}
-          value={state.description}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Equipment Needed"
-          onChangeText={(value) => handleInput("equipment", value)}
-          value={state.equipment}
-        />
-        <TextInput
-          style={timeInputStyle}
-          placeholder="Time"
-          onChangeText={(value) => handleInput("time", value)}
-          value={state.time}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="More Info"
-          onChangeText={(value) => handleInput("moreInfo", value)}
-          value={state.moreInfo}
-        />
-        <View style={styles.buttonContainer}>
-          <Button onPress={() => submitForm()} title="Save Exercise" />
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View>
+        <Text>Create a new Exercise</Text>
+        <View style={styles.container}>
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            onChangeText={(value) => handleInput("name", value)}
+            value={state.name}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Description"
+            onChangeText={(value) => handleInput("description", value)}
+            value={state.description}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Equipment Needed"
+            onChangeText={(value) => handleInput("equipment", value)}
+            value={state.equipment}
+          />
+          <TextInput
+            style={timeInputStyle}
+            placeholder="Time"
+            onChangeText={(value) => handleInput("time", value)}
+            value={state.time}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="More Info"
+            onChangeText={(value) => handleInput("moreInfo", value)}
+            value={state.moreInfo}
+          />
+          <View style={styles.buttonContainer}>
+            <Button onPress={() => submitForm()} title="Save Exercise" />
+          </View>
         </View>
+        {Platform.OS !== "web" && (
+          <ImagePicker
+            setImage={(val) => handleInput("image", val)}
+            imgURI={state.image}
+          />
+        )}
       </View>
-      <ImagePicker
-        setImage={(val) => handleInput("imagePath", val)}
-        imgURI={state.imagePath}
-      />
-    </View>
+    </ScrollView>
   );
 }
 

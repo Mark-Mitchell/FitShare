@@ -1,15 +1,25 @@
 import React from "react";
-import { Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
+
 import DeleteExercise from "./DeleteExercise";
 
 function ExerciseComponent(props) {
+  const imageUri =
+    props.image && Platform.OS !== "web"
+      ? { uri: props.image }
+      : require("../../../images/WIP.jpg");
+
   return (
     <TouchableOpacity style={styles.container}>
       <View style={styles.imgContainer}>
-        <Image
-          source={require("../../../images/test.jpg")}
-          style={styles.img}
-        />
+        <Image source={imageUri} style={styles.img} />
       </View>
       <View style={styles.contentContainer}>
         <Text>{props.name}</Text>
@@ -29,7 +39,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     height: 100,
-    // justifyContent: "space-between",
     backgroundColor: "#fff",
     padding: 5,
     margin: 5,

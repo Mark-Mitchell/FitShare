@@ -1,8 +1,11 @@
 import React from "react";
-import { View, Text, Button, Alert, Platform } from "react-native";
+import { View, Button, Alert, Platform } from "react-native";
+
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalData } from "../../../redux/actions";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system";
 
 function DeleteExercise(props) {
   const globalExercises = useSelector((state) => state.exercises);
@@ -34,6 +37,12 @@ function DeleteExercise(props) {
       [props.id]: {},
     };
 
+    // Delete image if one was provided
+    if (globalExercises[props.id].image && Platform.OS !== "web") {
+      await FileSystem.deleteAsync(globalExercises[props.id].image, {
+        idempotent: true,
+      });
+    }
     // Delete from Local Storage
     await AsyncStorage.setItem("exercises", JSON.stringify(updatedExercises));
     // Remove from Redux Store
