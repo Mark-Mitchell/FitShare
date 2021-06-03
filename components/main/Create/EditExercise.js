@@ -23,7 +23,8 @@ function EditExercise(props) {
     name: "",
     description: "",
     equipment: "",
-    time: "0",
+    time: -1,
+    reps: -1,
     image: "",
     moreInfo: "",
     image: "",
@@ -133,13 +134,34 @@ function EditExercise(props) {
             onChangeText={(value) => handleInput("equipment", value)}
             value={state.equipment}
           />
-          <TextInput
-            style={timeInputStyle}
-            placeholder="Time"
-            onChangeText={(value) => handleInput("time", value)}
-            value={state.time}
-            keyboardType="numeric"
+          <Button
+            style={styles.halfButton}
+            onPress={() => handleInput("time", state.time == -1 ? "" : -1)}
+            title="Time"
           />
+          <Button
+            style={styles.halfButton}
+            onPress={() => handleInput("reps", state.reps == -1 ? "" : -1)}
+            title="Reps"
+          />
+          {state.time !== -1 && (
+            <TextInput
+              style={timeInputStyle}
+              placeholder="Time"
+              onChangeText={(value) => handleInput("time", value)}
+              value={state.time}
+              keyboardType="numeric"
+            />
+          )}
+          {state.reps !== -1 && (
+            <TextInput
+              style={timeInputStyle}
+              placeholder="Repetitions"
+              onChangeText={(value) => handleInput("reps", value)}
+              value={state.reps}
+              keyboardType="numeric"
+            />
+          )}
           <TextInput
             style={styles.input}
             placeholder="More Info"
@@ -156,6 +178,7 @@ function EditExercise(props) {
             imgURI={state.image}
           />
         )}
+        <Text>{state.time}</Text>
       </View>
     </ScrollView>
   );
@@ -178,6 +201,10 @@ const styles = StyleSheet.create({
 
   buttonContainer: {
     marginTop: 5,
+  },
+
+  halfButton: {
+    flex: 0.5,
   },
 });
 
