@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, ScrollView, SafeAreaView } from "react-native";
+import { ScrollView, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 
 import ExerciseComponent from "./ExerciseComponent";
@@ -30,10 +30,7 @@ function Exercises() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView>
-        <Text>Tennis</Text>
-        {exerciseComponents}
-      </ScrollView>
+      <ScrollView>{exerciseComponents}</ScrollView>
     </SafeAreaView>
   );
 }

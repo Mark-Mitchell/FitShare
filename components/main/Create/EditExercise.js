@@ -114,7 +114,6 @@ function EditExercise(props) {
       keyboardShouldPersistTaps="handled"
     >
       <View>
-        <Text>Create a new Exercise</Text>
         <View style={styles.container}>
           <TextInput
             style={styles.input}
@@ -178,7 +177,6 @@ function EditExercise(props) {
             imgURI={state.image}
           />
         )}
-        <Text>{state.time}</Text>
       </View>
     </ScrollView>
   );
