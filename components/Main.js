@@ -39,7 +39,17 @@ function Main() {
   }, []);
 
   return (
-    <Tab.Navigator initialRouteName="Create">
+    <Tab.Navigator
+      initialRouteName="Create"
+      tabBarOptions={{
+        style: { color: "red" },
+        activeTintColor: "yellow",
+        inactiveBackgroundColor: "black",
+        activeBackgroundColor: "black",
+        inactiveTintColor: "white",
+        showLabel: false,
+      }}
+    >
       <Tab.Screen
         name="Workouts"
         component={Workouts}

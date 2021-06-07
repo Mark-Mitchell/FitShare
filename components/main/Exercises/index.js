@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ScrollView, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 
+import GlobalStyles from "../../../assets/GlobalStyles";
 import ExerciseComponent from "./ExerciseComponent";
 
 function Exercises() {
@@ -29,7 +30,7 @@ function Exercises() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={GlobalStyles.screenContainer}>
       <ScrollView>{exerciseComponents}</ScrollView>
     </SafeAreaView>
   );
