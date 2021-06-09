@@ -20,11 +20,7 @@ function Exercises() {
       <ExerciseComponent
         key={exerciseId}
         id={exerciseId}
-        name={exercises[exerciseId].name}
-        description={exercises[exerciseId].description}
-        equipment={exercises[exerciseId].equipment}
-        time={exercises[exerciseId].time}
-        image={exercises[exerciseId].image}
+        exercise={exercises[exerciseId]}
       />
     );
   });

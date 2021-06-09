@@ -22,10 +22,12 @@ function ExerciseComponent(props) {
         <Image source={imageUri} style={styles.img} />
       </View>
       <View style={styles.contentContainer}>
-        <Text>{props.name}</Text>
-        <Text>{props.description}</Text>
-        <Text>{props.equipment}</Text>
-        <Text>{props.time}</Text>
+        <Text>{props.exercise.name}</Text>
+        <Text>{props.exercise.description}</Text>
+        <Text>{props.exercise.equipment}</Text>
+        {props.exercise.time !== -1 && <Text>{props.exercise.time}</Text>}
+        {props.exercise.reps !== -1 && <Text>{props.exercise.reps}</Text>}
+        <Text>{props.exercise.moreInfo}</Text>
       </View>
       <View style={styles.deleteButtonContainer}>
         <DeleteExercise id={props.id} />
