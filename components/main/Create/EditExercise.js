@@ -28,6 +28,8 @@ function EditExercise(props) {
     image: "",
     moreInfo: "",
     image: "",
+    dropSets: false,
+    dropSetInfo: {},
   };
   const [state, setState] = useState(initialState);
 
@@ -108,6 +110,24 @@ function EditExercise(props) {
     return idArray.length > 0 ? Math.max(...idArray) + 1 : 1;
   };
 
+  const dropSetInputBox = (
+    <TextInput
+      style={styles.input}
+      placeholder="DropSet 1"
+      onChangeText={() => console.log("click")}
+      value=""
+    />
+  );
+
+  const addDropsetInput = () => {
+    setState({
+      ...state,
+      dropSetInfo: {
+        1: "Test Drops Set 1",
+      },
+    });
+  };
+
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -143,6 +163,7 @@ function EditExercise(props) {
             onPress={() => handleInput("reps", state.reps == -1 ? "" : -1)}
             title="Reps"
           />
+
           {state.time !== -1 && (
             <TextInput
               style={timeInputStyle}
@@ -176,6 +197,19 @@ function EditExercise(props) {
             setImage={(val) => handleInput("image", val)}
             imgURI={state.image}
           />
+        )}
+
+        <Button
+          style={styles.halfButton}
+          onPress={() => handleInput("dropSets", !state.dropSets)}
+          title="Drop Sets"
+        />
+        {state.dropSets && (
+          <View>
+            <Button onPress={() => addDropsetInput()} title="Add Dropset" />
+
+            <Text>{state.dropSetInfo[1]}</Text>
+          </View>
         )}
       </View>
     </ScrollView>
