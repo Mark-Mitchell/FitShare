@@ -16,6 +16,8 @@ import { fetchLocalData } from "../../../redux/actions";
 import ImagePicker from "./ImagePicker";
 import * as FileSystem from "expo-file-system";
 
+import DropSets from "./DropSets";
+
 function EditExercise(props) {
   const initialState = {
     id: 0,
@@ -38,16 +40,6 @@ function EditExercise(props) {
     setState({
       ...state,
       [key]: value,
-    });
-  };
-
-  const handleDropSetInput = (id, value) => {
-    setState({
-      ...state,
-      dropSetInfo: {
-        ...state.dropSetInfo,
-        [id]: value,
-      },
     });
   };
 
@@ -119,45 +111,6 @@ function EditExercise(props) {
     return idArray.length > 0 ? Math.max(...idArray) + 1 : 1;
   };
 
-  const addDropsetInput = () => {
-    const dropSetId = generateId(state.dropSetInfo);
-    setState({
-      ...state,
-      dropSetInfo: {
-        ...state.dropSetInfo,
-        [dropSetId]: "Test Drops Set " + dropSetId,
-      },
-    });
-  };
-
-  const deleteDropSetInput = (dropSetId) => {
-    setState({
-      ...state,
-      dropSetInfo: {
-        ...state.dropSetInfo,
-        [dropSetId]: false,
-      },
-    });
-  };
-
-  const dropSetInputs = Object.keys(state.dropSetInfo)
-    .filter((dropSetId) => state.dropSetInfo[dropSetId])
-    .map((dropSetId) => (
-      <View key={dropSetId}>
-        <TextInput
-          style={styles.input}
-          placeholder="DropSet 1"
-          onChangeText={(val) => handleDropSetInput(dropSetId, val)}
-          value={state.dropSetInfo[dropSetId]}
-        />
-        <Button
-          style={styles.halfButton}
-          onPress={() => deleteDropSetInput(dropSetId)}
-          title="Delete DropSet"
-        />
-      </View>
-    ));
-
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -218,9 +171,6 @@ function EditExercise(props) {
             onChangeText={(value) => handleInput("moreInfo", value)}
             value={state.moreInfo}
           />
-          <View style={styles.buttonContainer}>
-            <Button onPress={() => submitForm()} title="Save Exercise" />
-          </View>
         </View>
         {Platform.OS !== "web" && (
           <ImagePicker
@@ -234,13 +184,16 @@ function EditExercise(props) {
           onPress={() => handleInput("dropSets", !state.dropSets)}
           title="Drop Sets"
         />
-        {state.dropSets && (
-          <View>
-            <Button onPress={() => addDropsetInput()} title="Add Dropset" />
+        <DropSets
+          state={state}
+          setState={setState}
+          generateId={generateId}
+          styles={styles}
+        />
 
-            <View>{dropSetInputs}</View>
-          </View>
-        )}
+        <View style={styles.buttonContainer}>
+          <Button onPress={() => submitForm()} title="Save Exercise" />
+        </View>
       </View>
     </ScrollView>
   );
