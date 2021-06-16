@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Button,
-  Text,
   TextInput,
   View,
   StyleSheet,
@@ -39,6 +38,16 @@ function EditExercise(props) {
     setState({
       ...state,
       [key]: value,
+    });
+  };
+
+  const handleDropSetInput = (id, value) => {
+    setState({
+      ...state,
+      dropSetInfo: {
+        ...state.dropSetInfo,
+        [id]: value,
+      },
     });
   };
 
@@ -105,28 +114,49 @@ function EditExercise(props) {
     }
   };
 
-  const generateId = (exerciseObjects) => {
-    const idArray = Object.keys(exerciseObjects);
+  const generateId = (object) => {
+    const idArray = Object.keys(object);
     return idArray.length > 0 ? Math.max(...idArray) + 1 : 1;
   };
 
-  const dropSetInputBox = (
-    <TextInput
-      style={styles.input}
-      placeholder="DropSet 1"
-      onChangeText={() => console.log("click")}
-      value=""
-    />
-  );
-
   const addDropsetInput = () => {
+    const dropSetId = generateId(state.dropSetInfo);
     setState({
       ...state,
       dropSetInfo: {
-        1: "Test Drops Set 1",
+        ...state.dropSetInfo,
+        [dropSetId]: "Test Drops Set " + dropSetId,
       },
     });
   };
+
+  const deleteDropSetInput = (dropSetId) => {
+    setState({
+      ...state,
+      dropSetInfo: {
+        ...state.dropSetInfo,
+        [dropSetId]: false,
+      },
+    });
+  };
+
+  const dropSetInputs = Object.keys(state.dropSetInfo)
+    .filter((dropSetId) => state.dropSetInfo[dropSetId])
+    .map((dropSetId) => (
+      <View key={dropSetId}>
+        <TextInput
+          style={styles.input}
+          placeholder="DropSet 1"
+          onChangeText={(val) => handleDropSetInput(dropSetId, val)}
+          value={state.dropSetInfo[dropSetId]}
+        />
+        <Button
+          style={styles.halfButton}
+          onPress={() => deleteDropSetInput(dropSetId)}
+          title="Delete DropSet"
+        />
+      </View>
+    ));
 
   return (
     <ScrollView
@@ -208,7 +238,7 @@ function EditExercise(props) {
           <View>
             <Button onPress={() => addDropsetInput()} title="Add Dropset" />
 
-            <Text>{state.dropSetInfo[1]}</Text>
+            <View>{dropSetInputs}</View>
           </View>
         )}
       </View>
