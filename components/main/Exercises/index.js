@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import GlobalStyles from "../../../assets/GlobalStyles";
 import ExerciseComponent from "./ExerciseComponent";
 
-function Exercises() {
+function Exercises(props) {
   const [exercises, setExercises] = useState({});
 
   // Fetch Local Exercises on Mount
@@ -21,6 +21,7 @@ function Exercises() {
         key={exerciseId}
         id={exerciseId}
         exercise={exercises[exerciseId]}
+        navigation={props.navigation}
       />
     );
   });

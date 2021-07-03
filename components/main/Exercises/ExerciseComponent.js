@@ -8,6 +8,8 @@ import {
   Platform,
 } from "react-native";
 
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
 import DeleteExercise from "./DeleteExercise";
 
 function ExerciseComponent(props) {
@@ -28,6 +30,17 @@ function ExerciseComponent(props) {
         {props.exercise.time !== -1 && <Text>{props.exercise.time}</Text>}
         {props.exercise.reps !== -1 && <Text>{props.exercise.reps}</Text>}
         <Text>{props.exercise.moreInfo}</Text>
+      </View>
+      <View>
+        <MaterialCommunityIcons
+          name="play-outline"
+          size={50}
+          onPress={() =>
+            props.navigation.navigate("PlayExercise", {
+              exercise: props.exercise,
+            })
+          }
+        />
       </View>
       <View style={styles.deleteButtonContainer}>
         <DeleteExercise id={props.id} />
