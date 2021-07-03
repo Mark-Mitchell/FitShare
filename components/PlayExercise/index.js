@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Timer from "./Timer";
 
 function PlayExercise(props) {
   const { exercise } = props.route.params;
@@ -10,9 +11,9 @@ function PlayExercise(props) {
       ? { uri: exercise.image }
       : require("../../images/WIP.jpg");
 
-  console.log(exercise);
   return (
-    <View>
+    <ScrollView>
+      <Timer />
       <Text>{exercise.name}</Text>
       <Text>{exercise.description}</Text>
       <Text>{exercise.equipment}</Text>
@@ -44,7 +45,7 @@ function PlayExercise(props) {
         size={50}
         onPress={() => console.log("click")}
       />
-    </View>
+    </ScrollView>
   );
 }
 
