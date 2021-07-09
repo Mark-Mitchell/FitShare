@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Timer from "./Timer";
 
 function PlayExercise(props) {
   const { exercise } = props.route.params;
+
+  const [timerPlaying, setTimerPlaying] = useState(false);
+  const [timerDuration, setTimerDurataion] = useState(exercise.time);
+  // When key is changed, the timer resets
+  const [timerKey, setTimerKey] = useState(0);
 
   const imageUri =
     exercise.image && Platform.OS !== "web"
@@ -13,8 +18,11 @@ function PlayExercise(props) {
 
   return (
     <ScrollView>
-      <Timer />
-      <Text>{exercise.name}</Text>
+      {exercise.time > 0 && (
+        <Timer playing={timerPlaying} duration={timerDuration} key={timerKey} />
+      )}
+
+      {/* <Text>{exercise.name}</Text>
       <Text>{exercise.description}</Text>
       <Text>{exercise.equipment}</Text>
       <Text>{exercise.moreInfo}</Text>
@@ -23,22 +31,17 @@ function PlayExercise(props) {
 
       <View style={styles.imgContainer}>
         <Image source={imageUri} style={styles.img} />
-      </View>
+      </View> */}
 
       <MaterialCommunityIcons
-        name="stop"
+        name="reload"
         size={50}
-        onPress={() => console.log("click")}
+        onPress={() => setTimerKey(timerKey + 1)}
       />
       <MaterialCommunityIcons
-        name="play-outline"
+        name={timerPlaying ? "pause" : "play-outline"}
         size={50}
-        onPress={() => console.log("click")}
-      />
-      <MaterialCommunityIcons
-        name="pause"
-        size={50}
-        onPress={() => console.log("click")}
+        onPress={() => setTimerPlaying(!timerPlaying)}
       />
       <MaterialCommunityIcons
         name="check"

@@ -3,11 +3,11 @@ import React from "react";
 import { Animated } from "react-native";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 
-function Timer() {
+function Timer(props) {
   return (
     <CountdownCircleTimer
-      isPlaying
-      duration={10}
+      isPlaying={props.playing}
+      duration={props.duration}
       colors={[
         ["#A30000", 0.4],
         ["#004777", 0.4],
