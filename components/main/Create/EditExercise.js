@@ -1,3 +1,4 @@
+// Warning on Web, broken with new version of react native web, but works
 import React, { useState, useEffect } from "react";
 import {
   Button,
@@ -17,6 +18,7 @@ import ImagePicker from "./ImagePicker";
 import * as FileSystem from "expo-file-system";
 
 import DropSets from "./DropSets";
+import TimePicker from "./TimePicker";
 
 function EditExercise(props) {
   const initialState = {
@@ -136,6 +138,7 @@ function EditExercise(props) {
             onChangeText={(value) => handleInput("equipment", value)}
             value={state.equipment}
           />
+          {/* <TimePicker handleInput={handleInput} /> */}
           <Button
             style={styles.halfButton}
             onPress={() => handleInput("time", state.time == -1 ? "" : -1)}
@@ -147,15 +150,8 @@ function EditExercise(props) {
             title="Reps"
           />
 
-          {state.time !== -1 && (
-            <TextInput
-              style={timeInputStyle}
-              placeholder="Time"
-              onChangeText={(value) => handleInput("time", value)}
-              value={state.time}
-              keyboardType="numeric"
-            />
-          )}
+          {state.time !== -1 && <TimePicker handleInput={handleInput} />}
+
           {state.reps !== -1 && (
             <TextInput
               style={timeInputStyle}
