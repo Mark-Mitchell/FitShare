@@ -18,7 +18,7 @@ import ImagePicker from "./ImagePicker";
 import * as FileSystem from "expo-file-system";
 
 import DropSets from "./DropSets";
-import TimePicker from "./TimePicker";
+import PickerComponent from "./PickerComponent";
 
 function EditExercise(props) {
   const initialState = {
@@ -47,8 +47,6 @@ function EditExercise(props) {
 
   // Validate Input every time the state is changed
   useEffect(() => {
-    // check if time is number:
-    // TODO: Change Input colour and give a warning if NaN
     if (isNaN(state.time)) {
       const errorInputStyle = StyleSheet.flatten([styles.input, styles.error]);
       setTimeInputStyle(errorInputStyle);
@@ -150,15 +148,15 @@ function EditExercise(props) {
             title="Reps"
           />
 
-          {state.time !== -1 && <TimePicker handleInput={handleInput} />}
+          {state.time !== -1 && (
+            <PickerComponent handleInput={handleInput} type="time" />
+          )}
 
           {state.reps !== -1 && (
-            <TextInput
-              style={timeInputStyle}
-              placeholder="Repetitions"
-              onChangeText={(value) => handleInput("reps", value)}
-              value={state.reps}
-              keyboardType="numeric"
+            <PickerComponent
+              type="reps"
+              reps={state.reps}
+              handleInput={handleInput}
             />
           )}
           <TextInput
