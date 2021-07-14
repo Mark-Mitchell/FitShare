@@ -26,6 +26,7 @@ function TimePickerComponent(props) {
   return (
     <View>
       <Picker
+        mode={"dropdown"}
         selectedValue={minutes}
         onValueChange={(itemValue, itemIndex) => setMinutes(itemValue)}
       >

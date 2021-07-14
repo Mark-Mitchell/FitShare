@@ -138,7 +138,7 @@ function EditExercise(props) {
             onChangeText={(value) => handleInput("equipment", value)}
             value={state.equipment}
           />
-          {/* <TimePicker handleInput={handleInput} /> */}
+
           <Button
             style={styles.halfButton}
             onPress={() => handleInput("time", state.time == -1 ? "" : -1)}
