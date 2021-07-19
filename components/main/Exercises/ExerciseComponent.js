@@ -26,7 +26,7 @@ function ExerciseComponent(props) {
       <View style={styles.contentContainer}>
         <Text>{props.exercise.name}</Text>
         <Text>{props.exercise.description}</Text>
-        <Text>{props.exercise.equipment}</Text>
+        {/* <Text>{props.exercise.equipment}</Text> */}
         {props.exercise.time !== -1 && <Text>{props.exercise.time}</Text>}
         {props.exercise.reps !== -1 && <Text>{props.exercise.reps}</Text>}
         <Text>{props.exercise.moreInfo}</Text>

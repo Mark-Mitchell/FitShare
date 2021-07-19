@@ -4,3 +4,10 @@ export const fetchLocalData = (payload) => {
     payload,
   };
 };
+
+export const fetchEquipmentPicker = (payload) => {
+  return {
+    type: "FETCH_EQUIPMENT_PICKER",
+    payload,
+  };
+};
