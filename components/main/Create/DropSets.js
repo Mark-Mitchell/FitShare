@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, View, TextInput } from "react-native";
+import { Button, View } from "react-native";
+import PickerComponent from "./PickerComponent";
 
 function DropSets(props) {
   const addDropsetInput = () => {
@@ -8,17 +9,10 @@ function DropSets(props) {
       ...props.state,
       dropSetInfo: {
         ...props.state.dropSetInfo,
-        [dropSetId]: "",
-      },
-    });
-  };
-
-  const handleDropSetInput = (id, value) => {
-    props.setState({
-      ...props.state,
-      dropSetInfo: {
-        ...props.state.dropSetInfo,
-        [id]: value,
+        [dropSetId]: {
+          reps: 0,
+          weight: 0,
+        },
       },
     });
   };
@@ -32,15 +26,37 @@ function DropSets(props) {
     });
   };
 
+  // handle input from DropSets (key = reps or weight)
+  const handleDropSetInput = (id, key, value) => {
+    props.setState({
+      ...props.state,
+      dropSetInfo: {
+        ...props.state.dropSetInfo,
+        [id]: {
+          ...props.state.dropSetInfo[id],
+          [key]: value,
+        },
+      },
+    });
+  };
+
   const dropSetInputs = Object.keys(props.state.dropSetInfo).map(
     (dropSetId) => (
       <View key={dropSetId}>
-        <TextInput
-          style={props.styles.input}
-          placeholder="DropSet 1"
-          onChangeText={(val) => handleDropSetInput(dropSetId, val)}
-          value={props.state.dropSetInfo[dropSetId]}
+        <PickerComponent
+          type="dropsetReps"
+          reps={props.state.dropSetInfo[dropSetId].reps}
+          handleDropSetInput={handleDropSetInput}
+          id={dropSetId}
         />
+
+        <PickerComponent
+          type="dropsetWeight"
+          weight={props.state.dropSetInfo[dropSetId].weight}
+          handleDropSetInput={handleDropSetInput}
+          id={dropSetId}
+        />
+
         <Button
           style={props.styles.halfButton}
           onPress={() => deleteDropSetInput(dropSetId)}
