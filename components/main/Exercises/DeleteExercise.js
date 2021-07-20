@@ -1,11 +1,13 @@
 import React from "react";
-import { View, Button, Alert, Platform } from "react-native";
+import { Alert, Platform, Pressable } from "react-native";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalData } from "../../../redux/actions";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FileSystem from "expo-file-system";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 function DeleteExercise(props) {
   const globalExercises = useSelector((state) => state.exercises);
@@ -52,9 +54,14 @@ function DeleteExercise(props) {
   };
 
   return (
-    <View>
-      <Button title="Delete Exercise" onPress={handleDeleteExercise} />
-    </View>
+    <Pressable>
+      <MaterialCommunityIcons
+        name="close"
+        color="black"
+        size={20}
+        onPress={handleDeleteExercise}
+      />
+    </Pressable>
   );
 }
 
