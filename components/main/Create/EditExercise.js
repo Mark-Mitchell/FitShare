@@ -142,6 +142,7 @@ function EditExercise(props) {
             placeholder="Description"
             onChangeText={(value) => handleInput("description", value)}
             value={state.description}
+            multiline={true}
           />
 
           <Button
@@ -178,6 +179,7 @@ function EditExercise(props) {
             placeholder="More Info"
             onChangeText={(value) => handleInput("moreInfo", value)}
             value={state.moreInfo}
+            multiline={true}
           />
         </View>
         {Platform.OS !== "web" && (

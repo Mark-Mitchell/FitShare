@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -15,6 +15,8 @@ import { equipmentIcons } from "../../../assets/exercise data/equipment";
 import DeleteExercise from "./DeleteExercise";
 
 function ExerciseComponent(props) {
+  const [selected, setSelected] = useState(false);
+
   // get default image when on web or none was provided
   const imageUri =
     props.image && Platform.OS !== "web"
@@ -35,29 +37,45 @@ function ExerciseComponent(props) {
   ));
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => setSelected(!selected)}
+    >
       <View style={styles.imgContainer}>
         <Image source={imageUri} style={styles.img} />
       </View>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{props.exercise.name}</Text>
-        <Text style={styles.description}>{props.exercise.description}</Text>
 
-        <Text>Equipment Required:</Text>
+        {/* <Text>Equipment Required:</Text> */}
         <View style={styles.equipmentContainer}>{equipmentComponents}</View>
 
-        {props.exercise.time !== -1 && <Text>Time: {props.exercise.time}</Text>}
-        {props.exercise.reps !== -1 && <Text>Reps: {props.exercise.reps}</Text>}
+        {selected && (
+          <View>
+            <Text style={styles.title}>Exercise Information:</Text>
 
-        <Text>{props.exercise.moreInfo}</Text>
-        <Text>Drop Sets: {props.exercise.dropSets ? "Yes" : "No"}</Text>
+            <Text>Description:</Text>
+            <Text style={styles.description}>{props.exercise.description}</Text>
+
+            {props.exercise.time !== -1 && (
+              <Text>Time: {props.exercise.time}</Text>
+            )}
+            {props.exercise.reps !== -1 && (
+              <Text>Reps: {props.exercise.reps}</Text>
+            )}
+
+            <Text>More Information:</Text>
+            <Text>{props.exercise.moreInfo}</Text>
+            <Text>Drop Sets: {props.exercise.dropSets ? "Yes" : "No"}</Text>
+          </View>
+        )}
       </View>
 
       {/* Play / Delete Buttons */}
-      <View>
+      <View style={styles.playButtonContainer}>
         <MaterialCommunityIcons
           name="play-outline"
-          size={50}
+          size={30}
           onPress={() =>
             props.navigation.navigate("PlayExercise", {
               exercise: props.exercise,
@@ -74,9 +92,7 @@ function ExerciseComponent(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "row",
-    height: 100,
     backgroundColor: "#fff",
     padding: 5,
     margin: 5,
@@ -107,13 +123,20 @@ const styles = StyleSheet.create({
   },
 
   img: {
+    aspectRatio: 3 / 2,
     width: "100%",
-    height: "100%",
+    height: undefined,
+    // height: "100%",
+  },
+
+  playButtonContainer: {
+    alignSelf: "center",
   },
 
   deleteButtonContainer: {
     flex: 1,
     justifyContent: "flex-end",
+    alignSelf: "center",
   },
 });
 
