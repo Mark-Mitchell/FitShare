@@ -6,9 +6,9 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";
-import { fetchEquipmentPicker } from "../../../redux/actions";
+import { fetchEquipmentPicker } from "../../../../redux/actions";
 
-import { equipmentIcons } from "../../../assets/exercise data/equipment";
+import { equipmentIcons } from "../../../../assets/exercise data/equipment";
 
 function Equipment() {
   // get state from redux

@@ -1,13 +1,23 @@
-import React from "react";
-import { SafeAreaView } from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView, Button } from "react-native";
 
 import GlobalStyles from "../../../assets/GlobalStyles";
-import EditExercise from "./EditExercise";
+import EditExercise from "./Exercise/EditExercise";
+import EditWorkout from "./Workout/EditWorkout";
 
 function Create(props) {
+  const [editExercise, setEditExercise] = useState(false);
   return (
     <SafeAreaView style={GlobalStyles.screenContainer}>
-      <EditExercise navigation={props.navigation} />
+      <Button
+        title="Toggle Exercise / Workout"
+        onPress={() => setEditExercise(!editExercise)}
+      />
+      {editExercise ? (
+        <EditExercise navigation={props.navigation} />
+      ) : (
+        <EditWorkout />
+      )}
     </SafeAreaView>
   );
 }

@@ -12,7 +12,10 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useSelector, useDispatch } from "react-redux";
-import { fetchEquipmentPicker, fetchLocalData } from "../../../redux/actions";
+import {
+  fetchEquipmentPicker,
+  fetchLocalData,
+} from "../../../../redux/actions";
 
 import ImagePicker from "./ImagePicker";
 import * as FileSystem from "expo-file-system";
@@ -20,7 +23,7 @@ import * as FileSystem from "expo-file-system";
 import DropSets from "./DropSets";
 import PickerComponent from "./PickerComponent";
 
-import { defaultEquipment } from "../../../assets/exercise data/equipment";
+import { defaultEquipment } from "../../../../assets/exercise data/equipment";
 
 function EditExercise(props) {
   const initialState = {

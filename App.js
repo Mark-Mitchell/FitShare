@@ -23,7 +23,7 @@ import Landing from "./components/auth/Landing";
 import Register from "./components/auth/Register";
 import PlayExercise from "./components/PlayExercise";
 import Exercises from "./components/main/Exercises";
-import EquipmentPicker from "./components/main/Create/EquipmentPicker";
+import EquipmentPicker from "./components/main/Create/Exercise/EquipmentPicker";
 
 function App() {
   return (
