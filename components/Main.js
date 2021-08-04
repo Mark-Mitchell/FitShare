@@ -40,7 +40,7 @@ function Main() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Create"
+      initialRouteName="Exercises"
       tabBarOptions={{
         style: { color: "red" },
         activeTintColor: "yellow",

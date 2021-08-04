@@ -16,7 +16,7 @@ function Create(props) {
       {editExercise ? (
         <EditExercise navigation={props.navigation} />
       ) : (
-        <EditWorkout />
+        <EditWorkout navigation={props.navigation} />
       )}
     </SafeAreaView>
   );

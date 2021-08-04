@@ -4,7 +4,7 @@ import {
   View,
   Image,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   Platform,
 } from "react-native";
 
@@ -15,6 +15,7 @@ import { equipmentIcons } from "../../../assets/exercise data/equipment";
 import DeleteExercise from "./DeleteExercise";
 
 function ExerciseComponent(props) {
+  // toggling the full exercise information
   const [selected, setSelected] = useState(false);
 
   // get default image when on web or none was provided
@@ -36,10 +37,23 @@ function ExerciseComponent(props) {
     />
   ));
 
+  // Toggle background colour after a long press to select exercise (to create a workout)
+  const handleLongPress = (id) => {
+    props.exerciseSelectable ? props.selectExercise(id) : null;
+  };
+
+  const containerStyle = {
+    flexDirection: "row",
+    backgroundColor: props.selectedPicker ? "blue" : "#FFF",
+    padding: 5,
+    margin: 5,
+  };
+
   return (
-    <TouchableOpacity
-      style={styles.container}
+    <Pressable
+      style={containerStyle}
       onPress={() => setSelected(!selected)}
+      onLongPress={() => handleLongPress(props.exercise.id)}
     >
       <View style={styles.imgContainer}>
         <Image source={imageUri} style={styles.img} />
@@ -86,18 +100,11 @@ function ExerciseComponent(props) {
       <View style={styles.deleteButtonContainer}>
         <DeleteExercise id={props.id} />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    padding: 5,
-    margin: 5,
-  },
-
   title: {
     fontWeight: "bold",
   },

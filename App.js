@@ -24,6 +24,7 @@ import Register from "./components/auth/Register";
 import PlayExercise from "./components/PlayExercise";
 import Exercises from "./components/main/Exercises";
 import EquipmentPicker from "./components/main/Create/Exercise/EquipmentPicker";
+import ExercisePicker from "./components/main/Create/Workout/ExercisePicker";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Stack.Screen name="PlayExercise" component={PlayExercise} />
           <Stack.Screen name="Exercises" component={Exercises} />
           <Stack.Screen name="EquipmentPicker" component={EquipmentPicker} />
+          <Stack.Screen name="ExercisePicker" component={ExercisePicker} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

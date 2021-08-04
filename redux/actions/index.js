@@ -11,3 +11,10 @@ export const fetchEquipmentPicker = (payload) => {
     payload,
   };
 };
+
+export const fetchSelectedExercises = (payload) => {
+  return {
+    type: "FETCH_SELECTED_EXERCISES",
+    payload,
+  };
+};
