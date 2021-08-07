@@ -2,7 +2,7 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";

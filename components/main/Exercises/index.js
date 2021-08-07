@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, SafeAreaView } from "react-native";
+
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSelectedExercises } from "../../../redux/actions";
 

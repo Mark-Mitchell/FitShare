@@ -7,7 +7,7 @@ import * as FileSystem from "expo-file-system";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalData } from "../../../redux/actions";
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 function DeleteExercise(props) {
   const globalExercises = useSelector((state) => state.exercises);

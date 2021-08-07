@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import Timer from "./Timer";
 
 function PlayExercise(props) {
