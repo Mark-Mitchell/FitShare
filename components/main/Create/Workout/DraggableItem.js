@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   PanResponder,
+  Platform,
 } from "react-native";
 
 export const ITEM_HEIGHT = 100;
@@ -18,17 +19,8 @@ export function DraggableItem(props) {
   const [draggingItem, setDraggingItem] = useState(false);
 
   useEffect(() => {
-    // console.log(props.itemInfo)
-    // props.setItemPositions({
-    //   ...props.itemPositions,
-    //   [props.itemInfo]: {
-    //     ...props.itemPositions[props.itemInfo],
-    //     pan,
-    //   },
-    // });
     setDefaultPositionY(props.orderPositionY);
     props.testFunctionSetPan(props.itemInfo, pan);
-    // console.log(props.itemInfo);
   }, []);
 
   useEffect(() => {
@@ -73,27 +65,32 @@ export function DraggableItem(props) {
               // reorder the items
               console.log("REORDER " + hasMoved);
               props.reorder(props.order, hasMoved);
-              // if (hasMoved === "ITEM_MOVED_UP") {
-              //   props.reorder()
-              // } else if (hasMoved === "ITEM_MOVED_DOWN") {
-              // }
             }
           },
       }
     ),
     onPanResponderRelease: (e, gesture) => {
-      // props.reorder();
       setDraggingItem(false);
       const moveToValue = props.orderPositionY - defaultPositionY;
       console.log(props.orderPositionY + " " + defaultPositionY);
       Animated.spring(pan, {
         toValue: { x: 0, y: moveToValue },
-        // this line is needed, only works on false for some reason
         useNativeDriver: false,
       }).start();
     },
   });
 
+  const webStyles =
+    Platform.OS === "web"
+      ? {
+          WebkitTouchCallout: "none",
+          WebkitUserSelect: "none",
+          khtmlUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+          userSelect: "none",
+        }
+      : "";
   // styles in the function to have access to props
   const styles = StyleSheet.create({
     text: {
@@ -102,6 +99,15 @@ export function DraggableItem(props) {
       marginRight: 5,
       textAlign: "center",
       color: "#fff",
+    },
+    // disable copying text (for web mostly), so that the drag and drop works well with a mouse
+    textWeb: {
+      // webkitTouchCallout: "none",
+      // webkitUserSelect: "none",
+      // khtmlUserSelect: "none",
+      // mozUserSelect: "none",
+      // msUserSelect: "none",
+      // userSelect: "none",
     },
     draggableContainer: {
       position: "absolute",
@@ -115,15 +121,17 @@ export function DraggableItem(props) {
       backgroundColor: "cyan",
       width: Window.width,
       height: ITEM_HEIGHT,
+      zIndex: draggingItem ? 100 : 1,
     },
   });
 
+  // const webStyles = Platform.OS === "web" ? styles.textWeb : null;
   // pan.getLayout() return left and top properties with the correct values for each frame during animation
   return (
     <View style={styles.draggableContainer}>
       <Animated.View
         {...panResponder.panHandlers}
-        style={[pan.getLayout(), styles.item]}
+        style={[pan.getLayout(), styles.item, webStyles]}
       >
         <Text style={styles.text}>{props.itemInfo}</Text>
       </Animated.View>

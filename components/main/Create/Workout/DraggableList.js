@@ -22,6 +22,77 @@ function DraggableList(props) {
   const [selectedExercises, setSelectedExercises] = useState([]);
   const [itemPositions, setItemPositions] = useState({ test: { y: 100 } });
 
+  // -----------------------------------------------------------------------------
+  const moveExercise = (id, moveDirection) => {
+    // don't reorder anything if it's the first or last item
+    if (
+      (itemOrder === 0 && moved === "ITEM_MOVED_UP") ||
+      (itemOrder === selectedExercises.length - 1 &&
+        moved === "ITEM_MOVED_DOWN")
+    )
+      return;
+
+    const item = selectedExercises[itemOrder];
+    const itemIndexToBeMoved =
+      moved === "ITEM_MOVED_UP" ? itemOrder - 1 : itemOrder + 1;
+    const itemToBeMoved = selectedExercises[itemIndexToBeMoved];
+
+    const offset = moved === "ITEM_MOVED_UP" ? ITEM_HEIGHT : ITEM_HEIGHT * -1;
+    // console.log(offset);
+    const defaultPosOfItemToBeMoved = itemPositions[itemToBeMoved].y + offset;
+
+    // set new default pos and set animating to true (doesn't update the position in the child component)
+    setItemPositions((prevState) => ({
+      ...prevState,
+      [itemToBeMoved]: {
+        order: itemOrder,
+        y: prevState[item].y,
+        animating: true,
+      },
+      [item]: {
+        order: itemIndexToBeMoved,
+        y: prevState[itemToBeMoved].y,
+        animating: false,
+      },
+    }));
+
+    // Animate the swapping
+    Animated.timing(itemPositions[itemToBeMoved].pan, {
+      toValue: itemPositions[itemToBeMoved],
+      // easing: Easing.back(),
+      duration: 1000,
+      useNativeDriver: false,
+    }).start(() =>
+      // Reset the offset from spring using Animated.timing()
+      Animated.timing(itemPositions[itemToBeMoved].pan, {
+        toValue: itemPositions[itemToBeMoved],
+        // easing: Easing.linear,
+        duration: 0.0001,
+        useNativeDriver: false,
+      }).start(() => {
+        // set animating to false to update the correct position
+        setItemPositions((prevState) => ({
+          ...prevState,
+          [itemToBeMoved]: {
+            ...prevState[itemToBeMoved],
+            animating: false,
+          },
+        }));
+
+        // reorder the array
+        let newOrder = selectedExercises;
+        // newOrder.splice(itemOrder, 1);
+        // newOrder.splice(itemIndexToBeMoved, 0, item);
+        [newOrder[itemOrder], newOrder[itemIndexToBeMoved]] = [
+          newOrder[itemIndexToBeMoved],
+          newOrder[itemOrder],
+        ];
+        console.log(newOrder);
+        setSelectedExercises(newOrder);
+      })
+    );
+  };
+  //------------------------------------------------------------------------------
   // const [test, setTest] = useState([]);
 
   const calculateDropZoneValues = (event) => {
@@ -79,15 +150,27 @@ function DraggableList(props) {
     // console.log(offset);
     const defaultPosOfItemToBeMoved = itemPositions[itemToBeMoved].y + offset;
 
+    // reorder the array
+    let newOrder = selectedExercises;
+    // newOrder.splice(itemOrder, 1);
+    // newOrder.splice(itemIndexToBeMoved, 0, item);
+    [newOrder[itemOrder], newOrder[itemIndexToBeMoved]] = [
+      newOrder[itemIndexToBeMoved],
+      newOrder[itemOrder],
+    ];
+    console.log(newOrder);
+    setSelectedExercises(newOrder);
     // set new default pos and set animating to true (doesn't update the position in the child component)
     setItemPositions((prevState) => ({
       ...prevState,
       [itemToBeMoved]: {
+        ...prevState[itemToBeMoved],
         order: itemOrder,
         y: prevState[item].y,
         animating: true,
       },
       [item]: {
+        ...prevState[item],
         order: itemIndexToBeMoved,
         y: prevState[itemToBeMoved].y,
         animating: false,
@@ -99,13 +182,14 @@ function DraggableList(props) {
       toValue: itemPositions[itemToBeMoved],
       // easing: Easing.back(),
       duration: 1000,
+      useNativeDriver: false,
     }).start(() =>
       // Reset the offset from spring using Animated.timing()
       Animated.timing(itemPositions[itemToBeMoved].pan, {
         toValue: itemPositions[itemToBeMoved],
         // easing: Easing.linear,
         duration: 0.0001,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }).start(() => {
         // set animating to false to update the correct position
         setItemPositions((prevState) => ({
@@ -116,16 +200,16 @@ function DraggableList(props) {
           },
         }));
 
-        // reorder the array
-        let newOrder = selectedExercises;
-        // newOrder.splice(itemOrder, 1);
-        // newOrder.splice(itemIndexToBeMoved, 0, item);
-        [newOrder[itemOrder], newOrder[itemIndexToBeMoved]] = [
-          newOrder[itemIndexToBeMoved],
-          newOrder[itemOrder],
-        ];
-        console.log(newOrder);
-        setSelectedExercises(newOrder);
+        // // reorder the array
+        // let newOrder = selectedExercises;
+        // // newOrder.splice(itemOrder, 1);
+        // // newOrder.splice(itemIndexToBeMoved, 0, item);
+        // [newOrder[itemOrder], newOrder[itemIndexToBeMoved]] = [
+        //   newOrder[itemIndexToBeMoved],
+        //   newOrder[itemOrder],
+        // ];
+        // console.log(newOrder);
+        // setSelectedExercises(newOrder);
       })
     );
 
@@ -294,7 +378,7 @@ function DraggableList(props) {
           Animated.spring(itemPositions["Ex 3"].pan, {
             toValue: { x: 0, y: 100 },
             // this line is needed, only works on false for some reason
-            useNativeDriver: true,
+            useNativeDriver: false,
           }).start(
             () => itemPositions["Ex 3"].pan.flattenOffset()
             // null
