@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, SafeAreaView } from "react-native";
+import { ScrollView, SafeAreaView, Button } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSelectedExercises } from "../../../redux/actions";
@@ -21,23 +21,22 @@ function Exercises(props) {
   const [selectedExercises, setSelectedExercises] = useState([]);
   const exerciseSelectable =
     props.exerciseSelectable === undefined ? false : props.exerciseSelectable;
-  const selectedExerciseIds = useSelector((state) => state.selectedExercises);
 
   const selectExercise = (id) => {
-    let updatedSelectedExerciseIds = selectedExerciseIds;
+    let updatedSelectedExerciseIds = [...selectedExercises];
     if (updatedSelectedExerciseIds.includes(id)) {
       const index = updatedSelectedExerciseIds.indexOf(id);
       updatedSelectedExerciseIds.splice(index, 1);
     } else {
       updatedSelectedExerciseIds.push(id);
     }
-    // need to send a "new" array with ...updatedSelectedExerciseIds so that useSelector() knows the state changed
-    dispatch(fetchSelectedExercises([...updatedSelectedExerciseIds]));
+    setSelectedExercises(updatedSelectedExerciseIds);
   };
 
-  useEffect(() => {
-    setSelectedExercises(selectedExerciseIds);
-  }, [selectedExerciseIds]);
+  const saveSelectedExercises = () => {
+    dispatch(fetchSelectedExercises(selectedExercises));
+    props.navigation.goBack(null);
+  };
 
   const exerciseComponents = Object.keys(exercises).map((exerciseId) => {
     // Only list items that are not empty (=deleted)
@@ -62,6 +61,9 @@ function Exercises(props) {
   return (
     <SafeAreaView style={GlobalStyles.screenContainer}>
       <ScrollView>{exerciseComponents}</ScrollView>
+      {exerciseSelectable && (
+        <Button title="Save" onPress={() => saveSelectedExercises()} />
+      )}
     </SafeAreaView>
   );
 }
