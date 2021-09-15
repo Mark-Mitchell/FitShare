@@ -47,6 +47,7 @@ function ExerciseComponent(props) {
     backgroundColor: props.selectedPicker ? "blue" : "#FFF",
     padding: 5,
     margin: 5,
+    height: 100,
   };
 
   return (
@@ -55,13 +56,27 @@ function ExerciseComponent(props) {
       onPress={() => setSelected(!selected)}
       onLongPress={() => handleLongPress(props.exercise.id)}
     >
+      {
+        // order in list for createWorkout
+        props.workout && (
+          <View>
+            <Pressable onPress={() => props.openModal(props.currentIndex)}>
+              <MaterialCommunityIcons
+                name="arrow-up-down-bold-outline"
+                size={20}
+              />
+              <Text>{props.currentIndex}</Text>
+            </Pressable>
+          </View>
+        )
+      }
+
       <View style={styles.imgContainer}>
         <Image source={imageUri} style={styles.img} />
       </View>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{props.exercise.name}</Text>
 
-        {/* <Text>Equipment Required:</Text> */}
         <View style={styles.equipmentContainer}>{equipmentComponents}</View>
 
         {selected && (
@@ -86,20 +101,29 @@ function ExerciseComponent(props) {
       </View>
 
       {/* Play / Delete Buttons */}
-      <View style={styles.playButtonContainer}>
-        <MaterialCommunityIcons
-          name="play-outline"
-          size={30}
-          onPress={() =>
-            props.navigation.navigate("PlayExercise", {
-              exercise: props.exercise,
-            })
-          }
-        />
-      </View>
-      <View style={styles.deleteButtonContainer}>
-        <DeleteExercise id={props.id} />
-      </View>
+      {!props.exerciseSelectable && (
+        <>
+          <View style={styles.playButtonContainer}>
+            <MaterialCommunityIcons
+              name="play-outline"
+              size={30}
+              onPress={() =>
+                props.navigation.navigate("PlayExercise", {
+                  exercise: props.exercise,
+                })
+              }
+            />
+          </View>
+          <View style={styles.deleteButtonContainer}>
+            <DeleteExercise
+              id={props.id}
+              workout={props.workout ? true : false}
+              removeItemFromList={props.removeItemFromList}
+              currentIndex={props.currentIndex}
+            />
+          </View>
+        </>
+      )}
     </Pressable>
   );
 }

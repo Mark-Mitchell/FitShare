@@ -10,26 +10,35 @@ import { fetchLocalData } from "../../../redux/actions";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 function DeleteExercise(props) {
+  // Delete Exercise (Exercises) or remove Exercise from Workout (EditWorkout)
+  const workout = props.workout ? true : false;
+
   const globalExercises = useSelector((state) => state.exercises);
   const dispatch = useDispatch();
 
   const handleDeleteExercise = () => {
-    // Platform specific conformation prompt
-    if (Platform.OS === "web") {
-      return confirm("Test") ? deleteExercise() : null;
+    if (workout) {
+      // remove exercise from workout list
+      props.removeItemFromList(props.currentIndex);
     } else {
-      return Alert.alert(
-        globalExercises[props.id].name,
-        "Are you sure you want to delete this exercise?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => null,
-            style: "cancel",
-          },
-          { text: "OK", onPress: () => deleteExercise() },
-        ]
-      );
+      // delete the exercise completely
+      // Platform specific conformation prompt
+      if (Platform.OS === "web") {
+        return confirm("Test") ? deleteExercise() : null;
+      } else {
+        return Alert.alert(
+          globalExercises[props.id].name,
+          "Are you sure you want to delete this exercise?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => null,
+              style: "cancel",
+            },
+            { text: "Delete", onPress: () => deleteExercise() },
+          ]
+        );
+      }
     }
   };
 
