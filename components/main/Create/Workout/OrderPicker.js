@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { View, Button, Text, Pressable, Platform } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Platform,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 
 // need to use different packages for different platforms
 import ModalMobile from "react-native-modal";
 import ModalWeb from "modal-react-native-web";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+// import { TouchableOpacity } from "react-native-web";
 
 function OrderPicker(props) {
   const [position, setPosition] = useState(props.currentPos);
@@ -66,10 +75,10 @@ function OrderPicker(props) {
   };
 
   const content = (
-    <>
+    <View style={styles.content}>
       <Text>Move to Position</Text>
 
-      <View>
+      <View style={styles.positionPicker}>
         <Pressable disabled={disabled.left} onPress={() => changePos(-1)}>
           <MaterialCommunityIcons name="arrow-left" size={30} />
         </Pressable>
@@ -79,41 +88,53 @@ function OrderPicker(props) {
         </Pressable>
       </View>
 
-      <Button title="Cancel" onPress={() => props.setModalVisible(false)} />
-      <Button
-        title="Save"
-        onPress={() => {
-          props.moveToNewPos(props.currentPos, position);
-          props.setModalVisible(false);
-        }}
-      />
-    </>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            props.setModalVisible(false);
+          }}
+        >
+          <Text>Cancel</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            props.moveToNewPos(props.currentPos, position);
+            props.setModalVisible(false);
+          }}
+        >
+          <Text>Save</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
   return (
     <>
       {Platform.OS === "web" ? (
         <ModalWeb
           animationType="slide"
-          transparent={false}
+          transparent={true}
           ariaHideApp={false}
           visible={props.modalVisible}
           onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
+            props.setModalVisible(false);
           }}
+          style={styles.modal}
         >
-          {content}
+          <View style={styles.webContainer}>{content}</View>
         </ModalWeb>
       ) : (
         <ModalMobile
           animationType="slide"
-          transparent={false}
+          transparent={true}
           ariaHideApp={false}
           visible={props.modalVisible}
           onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
+            props.setModalVisible(false);
           }}
+          style={styles.modal}
         >
           {content}
         </ModalMobile>
@@ -121,5 +142,47 @@ function OrderPicker(props) {
     </>
   );
 }
+
+const modalBackgroundColour = "rgba(0, 0, 0, 0.5)";
+const styles = StyleSheet.create({
+  modal: {
+    flex: 1,
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: modalBackgroundColour,
+    margin: 0,
+  },
+  webContainer: {
+    flex: 1,
+    backgroundColor: modalBackgroundColour,
+  },
+  content: {
+    width: (2 / 3) * Dimensions.get("window").width,
+    backgroundColor: "white",
+    paddingRight: 10,
+    paddingLeft: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    height: "auto",
+    margin: "auto",
+    position: "relative",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  button: {
+    alignItems: "center",
+    backgroundColor: "#ddddddad",
+    padding: 10,
+    width: "45%",
+  },
+  positionPicker: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+});
 
 export default OrderPicker;

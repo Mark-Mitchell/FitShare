@@ -3,7 +3,6 @@ import { StyleSheet, View, SafeAreaView } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import GlobalStyles from "../../../../assets/GlobalStyles";
 import { fetchSelectedExercises } from "../../../../redux/actions";
 import ExerciseComponent from "../../Exercises/ExerciseComponent";
 import OrderPicker from "./OrderPicker";
@@ -105,7 +104,7 @@ function ReordableList(props) {
   }, [selectedExercises]);
 
   return (
-    <SafeAreaView style={GlobalStyles.screenContainer}>
+    <SafeAreaView>
       <View style={styles.mainContainer}>{renderedItems}</View>
 
       <OrderPicker
@@ -120,25 +119,8 @@ function ReordableList(props) {
 }
 
 let styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
   mainContainer: {
     flex: 1,
-  },
-  dropZone: {
-    height: 100,
-    backgroundColor: "blue",
-  },
-  text: {
-    marginTop: 25,
-    marginLeft: 5,
-    marginRight: 5,
-    textAlign: "center",
-    color: "#fff",
   },
 });
 
