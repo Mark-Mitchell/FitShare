@@ -4,7 +4,7 @@ import { ScrollView, SafeAreaView, Button } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSelectedExercises } from "../../../redux/actions";
 
-import GlobalStyles from "../../../assets/GlobalStyles";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
 import ExerciseComponent from "./ExerciseComponent";
 
 function Exercises(props) {

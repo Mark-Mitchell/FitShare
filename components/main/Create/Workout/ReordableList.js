@@ -16,7 +16,9 @@ function ReordableList(props) {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [selectedExercises, setSelectedExercises] = useState([]);
+  const [selectedExercises, setSelectedExercises] = useState(
+    props.selectedExercises
+  );
   const [renderedItems, setRenderedItems] = useState(null);
 
   const [currentPosItemToChange, setCurrentPosItemToChange] = useState(0);
@@ -76,7 +78,7 @@ function ReordableList(props) {
             id={selectedExercises[i]}
             exercise={exercises[selectedExercises[i]]}
             navigation={props.navigation}
-            workout={true}
+            reordable={true}
             openModal={openModal}
             removeItemFromList={removeItemFromList}
             currentIndex={currentIndex}
@@ -101,6 +103,7 @@ function ReordableList(props) {
     if (loading === false) {
       setItems();
     }
+    props.setSelectedExercises(selectedExercises);
   }, [selectedExercises]);
 
   return (

@@ -12,10 +12,11 @@ function TimePickerComponent(props) {
   const pickerItems = (
     maxNumber,
     displayPercentage = false,
-    incrementBy = 1
+    incrementBy = 1,
+    startingNum = 0
   ) => {
     let array = [];
-    for (let i = 0; i < maxNumber + 1; i += incrementBy) {
+    for (let i = startingNum; i < maxNumber + 1; i += incrementBy) {
       let label = i.toString();
       displayPercentage && (label += "%");
       array.push(<Picker.Item label={label} value={i} key={i} />);
@@ -68,7 +69,7 @@ function TimePickerComponent(props) {
           selectedValue={props.reps}
           onValueChange={(itemValue) => props.handleInput("reps", itemValue)}
         >
-          {pickerItems(100)}
+          {pickerItems(100, false, 1, 1)}
         </Picker>
       )}
 

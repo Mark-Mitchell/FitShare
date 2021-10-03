@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Pressable,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -13,6 +14,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { equipmentIcons } from "../../../assets/exercise data/equipment";
 
 import DeleteExercise from "./DeleteExercise";
+import formatTime from "../../../assets/styling/formatTime";
 
 function ExerciseComponent(props) {
   // toggling the full exercise information
@@ -50,15 +52,19 @@ function ExerciseComponent(props) {
     height: 100,
   };
 
+  const handlePress = () => {
+    props.workout ? null : setSelected(!selected);
+  };
+
   return (
     <Pressable
       style={containerStyle}
-      onPress={() => setSelected(!selected)}
+      onPress={() => handlePress()}
       onLongPress={() => handleLongPress(props.exercise.id)}
     >
       {
         // order in list for createWorkout
-        props.workout && (
+        props.reordable && (
           <View>
             <Pressable onPress={() => props.openModal(props.currentIndex)}>
               <MaterialCommunityIcons
@@ -98,6 +104,49 @@ function ExerciseComponent(props) {
             <Text>Drop Sets: {props.exercise.dropSets ? "Yes" : "No"}</Text>
           </View>
         )}
+
+        {props.workout && (
+          <>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                props.handleRepsPress(props.index, props.reps);
+              }}
+            >
+              <Text>Repetitions: {props.reps}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                props.handleTimePress(
+                  "between_sets",
+                  props.index,
+                  props.timeBetweenSets
+                );
+              }}
+            >
+              <Text>
+                Time Between Sets: {formatTime(props.timeBetweenSets)}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                props.handleTimePress(
+                  "after_exercise",
+                  props.index,
+                  props.timeAfterExercise
+                );
+              }}
+            >
+              <Text>
+                Time After Exercise: {formatTime(props.timeAfterExercise)}
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
 
       {/* Play / Delete Buttons */}
@@ -114,14 +163,17 @@ function ExerciseComponent(props) {
               }
             />
           </View>
-          <View style={styles.deleteButtonContainer}>
-            <DeleteExercise
-              id={props.id}
-              workout={props.workout ? true : false}
-              removeItemFromList={props.removeItemFromList}
-              currentIndex={props.currentIndex}
-            />
-          </View>
+          {/* Show delete button when its not displayed in a workout */}
+          {props.workout ? null : (
+            <View style={styles.deleteButtonContainer}>
+              <DeleteExercise
+                id={props.id}
+                workout={props.reordable ? true : false}
+                removeItemFromList={props.removeItemFromList}
+                currentIndex={props.currentIndex}
+              />
+            </View>
+          )}
         </>
       )}
     </Pressable>

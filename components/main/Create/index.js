@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SafeAreaView, Button } from "react-native";
 
-import GlobalStyles from "../../../assets/GlobalStyles";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
 import EditExercise from "./Exercise/EditExercise";
 import EditWorkout from "./Workout/EditWorkout";
 

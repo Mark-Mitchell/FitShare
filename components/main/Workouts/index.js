@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { Text, Button, SafeAreaView } from "react-native";
 
-import GlobalStyles from "../../../assets/GlobalStyles";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
 
 function Workout(props) {
-  useEffect(() => {
-    console.log(props.navigation);
-  }, []);
+  // useEffect(() => {
+  //   console.log(props.navigation);
+  // }, []);
 
   return (
     <SafeAreaView style={GlobalStyles.screenContainer}>

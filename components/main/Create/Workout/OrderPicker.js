@@ -5,7 +5,6 @@ import {
   Pressable,
   Platform,
   StyleSheet,
-  Dimensions,
   TouchableOpacity,
 } from "react-native";
 
@@ -14,7 +13,8 @@ import ModalMobile from "react-native-modal";
 import ModalWeb from "modal-react-native-web";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-// import { TouchableOpacity } from "react-native-web";
+
+import GlobalStyles from "../../../../assets/styling/GlobalStyles";
 
 function OrderPicker(props) {
   const [position, setPosition] = useState(props.currentPos);
@@ -75,7 +75,7 @@ function OrderPicker(props) {
   };
 
   const content = (
-    <View style={styles.content}>
+    <View style={GlobalStyles.modalContent}>
       <Text>Move to Position</Text>
 
       <View style={styles.positionPicker}>
@@ -88,9 +88,9 @@ function OrderPicker(props) {
         </Pressable>
       </View>
 
-      <View style={styles.buttonContainer}>
+      <View style={GlobalStyles.modalButtonContainer}>
         <TouchableOpacity
-          style={styles.button}
+          style={GlobalStyles.modalButton}
           onPress={() => {
             props.setModalVisible(false);
           }}
@@ -99,7 +99,7 @@ function OrderPicker(props) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.button}
+          style={GlobalStyles.modalButton}
           onPress={() => {
             props.moveToNewPos(props.currentPos, position);
             props.setModalVisible(false);
@@ -121,9 +121,9 @@ function OrderPicker(props) {
           onRequestClose={() => {
             props.setModalVisible(false);
           }}
-          style={styles.modal}
+          style={GlobalStyles.modal}
         >
-          <View style={styles.webContainer}>{content}</View>
+          <View style={GlobalStyles.modalWebContainer}>{content}</View>
         </ModalWeb>
       ) : (
         <ModalMobile
@@ -134,7 +134,7 @@ function OrderPicker(props) {
           onRequestClose={() => {
             props.setModalVisible(false);
           }}
-          style={styles.modal}
+          style={GlobalStyles.modal}
         >
           {content}
         </ModalMobile>
@@ -143,42 +143,7 @@ function OrderPicker(props) {
   );
 }
 
-const modalBackgroundColour = "rgba(0, 0, 0, 0.5)";
 const styles = StyleSheet.create({
-  modal: {
-    flex: 1,
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: modalBackgroundColour,
-    margin: 0,
-  },
-  webContainer: {
-    flex: 1,
-    backgroundColor: modalBackgroundColour,
-  },
-  content: {
-    width: (2 / 3) * Dimensions.get("window").width,
-    backgroundColor: "white",
-    paddingRight: 10,
-    paddingLeft: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-    height: "auto",
-    margin: "auto",
-    position: "relative",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#ddddddad",
-    padding: 10,
-    width: "45%",
-  },
   positionPicker: {
     flexDirection: "row",
     justifyContent: "space-between",
