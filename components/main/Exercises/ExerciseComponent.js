@@ -56,6 +56,10 @@ function ExerciseComponent(props) {
     props.workout ? null : setSelected(!selected);
   };
 
+  const editExercise = (id) => {
+    props.navigation.navigate("EditExercise", { id, isEditing: true });
+  };
+
   return (
     <Pressable
       style={containerStyle}
@@ -171,6 +175,9 @@ function ExerciseComponent(props) {
           {/* Show delete button when its not displayed in a workout */}
           {props.workout ? null : (
             <View style={styles.deleteButtonContainer}>
+              <Pressable onPress={() => editExercise(props.id)}>
+                <MaterialCommunityIcons name="pencil" size={40} />
+              </Pressable>
               <DeleteExercise
                 id={props.id}
                 workout={props.reordable ? true : false}

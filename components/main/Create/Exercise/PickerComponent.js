@@ -3,10 +3,14 @@
 
 import React, { useState } from "react";
 import { View, Picker } from "react-native";
+import formatTime from "../../../../assets/styling/formatTime";
 
 function TimePickerComponent(props) {
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
+  const startTime =
+    props.hasOwnProperty("startTime") && props.startTime ? props.startTime : 0;
+  const time = formatTime(startTime, true);
+  const [minutes, setMinutes] = useState(time.minutes);
+  const [seconds, setSeconds] = useState(time.seconds);
 
   // Makes list of numbers for the dropdowns (displayPercentage, incrementBy needed for dropSetWeight)
   const pickerItems = (

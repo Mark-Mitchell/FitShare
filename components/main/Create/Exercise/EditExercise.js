@@ -29,27 +29,37 @@ import { defaultEquipment } from "../../../../assets/exercise data/equipment";
 import generateId from "../../../../assets/global functions/generateId";
 
 function EditExercise(props) {
-  const initialState = {
-    id: 0,
-    name: "",
-    description: "",
-    equipment: {},
-    time: -1,
-    reps: 1,
-    image: "",
-    moreInfo: "",
-    image: "",
-    dropSets: false,
-    dropSetInfo: {},
-  };
+  const localExercises = useSelector((state) => state.exercises);
+
+  // console.log(props.route.params);
+  const isEditing = props.hasOwnProperty("route");
+  // console.log(props.hasOwnProperty("route"));
+  const initialState = isEditing
+    ? localExercises[props.route.params.id]
+    : {
+        id: 0,
+        name: "",
+        description: "",
+        equipment: {},
+        time: -1,
+        reps: 1,
+        image: "",
+        moreInfo: "",
+        image: "",
+        dropSets: false,
+        dropSetInfo: {},
+      };
   const [state, setState] = useState(initialState);
 
-  const [timeInputStyle, setTimeInputStyle] = useState(styles.input);
-
   // Timed exercise or Reps based
-  const [isTimedExercise, setIsTimeExercise] = useState(false);
+  const [isTimedExercise, setIsTimeExercise] = useState(
+    isEditing ? state.time !== -1 : false
+  );
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (loading === true) return setLoading(false);
     setState((prevState) => {
       return {
         ...prevState,
@@ -66,16 +76,6 @@ function EditExercise(props) {
     });
   };
 
-  // Validate Input every time the state is changed
-  useEffect(() => {
-    if (isNaN(state.time)) {
-      const errorInputStyle = StyleSheet.flatten([styles.input, styles.error]);
-      setTimeInputStyle(errorInputStyle);
-    } else {
-      setTimeInputStyle(styles.input);
-    }
-  }, [state]);
-
   // update state when equipment is updated from the EquipmentPicker using redux
   const equipment = useSelector((state) => state.equipmentPicker);
   useEffect(() => {
@@ -86,12 +86,11 @@ function EditExercise(props) {
   }, [equipment]);
 
   // Handle Submit
-  const localExercises = useSelector((state) => state.exercises);
   const dispatch = useDispatch();
 
   const submitForm = async () => {
     try {
-      const id = generateId(localExercises);
+      const id = isEditing ? state.id : generateId(localExercises);
 
       // Save Image locally
       if (Platform.OS !== "web" && state.image) {
@@ -130,7 +129,9 @@ function EditExercise(props) {
       setState(initialState);
       // Update global state
       dispatch(fetchLocalData(exercises));
-      props.navigation.navigate("Exercises");
+      isEditing
+        ? props.navigation.goBack()
+        : props.navigation.navigate("Exercises");
       // reset equipmentPicker in redux
       dispatch(fetchEquipmentPicker(defaultEquipment));
       // TODO: give some user feedback
@@ -180,7 +181,11 @@ function EditExercise(props) {
           </View>
 
           {state.time !== -1 && (
-            <PickerComponent handleInput={handleInput} type="time" />
+            <PickerComponent
+              handleInput={handleInput}
+              type="time"
+              startTime={isEditing ? state.time : null}
+            />
           )}
 
           {state.reps !== -1 && (

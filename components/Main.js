@@ -44,8 +44,7 @@ function Main() {
 
   return (
     <Tab.Navigator
-      // currently can't set initial route to name, because Exercises needs to load first
-      initialRouteName="Create"
+      initialRouteName="Exercises"
       tabBarOptions={{
         style: { color: "red" },
         activeTintColor: "yellow",
