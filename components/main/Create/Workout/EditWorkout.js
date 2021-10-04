@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLocalWorkouts } from "../../../../redux/actions";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import WorkoutPage from "../../Workouts/WorkoutPage";
 import Form from "./Form";
-
 import ReordableList from "./ReordableList";
+
+import generateId from "../../../../assets/global functions/generateId";
 
 function EditWorkout(props) {
   const exercises = useSelector((state) => state.exercises);
   const [step, setStep] = useState(1);
   const [selectedExercises, setSelectedExercises] = useState([]);
 
-  const [workout, setWorkout] = useState({
+  const initialWorkoutState = {
     generalInfo: {
       title: "",
       description: "",
@@ -20,7 +26,8 @@ function EditWorkout(props) {
       defaultReps: 1,
     },
     exercises: {},
-  });
+  };
+  const [workout, setWorkout] = useState(initialWorkoutState);
 
   // Generate the workout in the background after every change
   useEffect(() => {
@@ -65,6 +72,77 @@ function EditWorkout(props) {
     });
   }, [selectedExercises]);
 
+  // Save the Workout
+  const dispatch = useDispatch();
+  const reduxWorkouts = useSelector((state) => state.workouts);
+
+  const calculateWorkoutTime = (exercisesObject) => {
+    let totalTime = 0;
+    for (let i = 0; i < Object.keys(exercisesObject).length; i++) {
+      const id = exercisesObject[i].info.id;
+      const exercise = exercises[id];
+      const isTimedExercise = exercise.time !== -1;
+
+      const workoutReps = workout.exercises[i].reps
+        ? workout.exercises[i].reps
+        : 1;
+      const timeBetweenSets =
+        workout.exercises[i].timeBetweenSets ||
+        workout.exercises[i].timeBetweenSets === 0
+          ? workout.exercises[i].timeBetweenSets
+          : workout.generalInfo.defaultTimeBetweenSets;
+      const timeBetweenExercises =
+        workout.exercises[i].timeBetweenExercises ||
+        workout.exercises[i].timeBetweenExercises === 0
+          ? workout.exercises[i].timeBetweenExercises
+          : workout.generalInfo.defaultTimeBetweenExercises;
+
+      // exercise time
+      if (isTimedExercise) {
+        totalTime += workoutReps * exercise.time;
+      } else {
+        totalTime += workoutReps * exercise.reps * 5;
+      }
+      // break time
+      totalTime += (workoutReps - 1) * timeBetweenSets;
+      totalTime += timeBetweenExercises;
+    }
+    return totalTime;
+  };
+
+  const saveWorkout = async () => {
+    // calculate the estimated time per workout:
+    const totalTime = calculateWorkoutTime(workout.exercises);
+
+    // save to redux
+    const id = generateId(reduxWorkouts);
+
+    const newState = {
+      ...reduxWorkouts,
+      [id]: {
+        ...workout,
+        generalInfo: {
+          ...workout.generalInfo,
+          totalTime,
+        },
+      },
+    };
+
+    dispatch(fetchLocalWorkouts(newState));
+
+    // save to LocalStorage
+    try {
+      await AsyncStorage.setItem("workouts", JSON.stringify(newState));
+    } catch (error) {
+      console.log(error);
+    }
+
+    // reset form
+    setWorkout(initialWorkoutState);
+    setStep(1);
+    setSelectedExercises([]);
+  };
+
   return (
     <View style={styles.container}>
       {/* Step One (Chosing the exercises and their order) */}
@@ -98,6 +176,7 @@ function EditWorkout(props) {
             workout={workout}
             setWorkout={setWorkout}
           />
+          <Button title="Save Workout" onPress={() => saveWorkout()} />
         </>
       )}
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, Button } from "react-native";
+import { Text } from "react-native";
 
 import { useSelector } from "react-redux";
 
@@ -7,9 +7,13 @@ import ExerciseComponent from "../Exercises/ExerciseComponent";
 import TimeRepsPicker from "../Create/Workout/TimeRepsPicker";
 
 function WorkoutPage(props) {
+  // get workout from props or through react navigation
+  const isViewOnly = !props.hasOwnProperty("workout"); // return true if the times shouldn't be changeable
+  const propWorkout = isViewOnly ? props.route.params.workout : props.workout;
+
   const exercises = useSelector((state) => state.exercises);
 
-  const [workout, setWorkout] = useState(props.workout);
+  const [workout, setWorkout] = useState(propWorkout);
   const [exercisesComponent, setExercisesComponent] = useState(null);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,6 +26,7 @@ function WorkoutPage(props) {
   });
 
   const handleTimePress = (type, index, time) => {
+    if (isViewOnly) return;
     setPickerInfo((prevState) => {
       return {
         ...prevState,
@@ -35,6 +40,7 @@ function WorkoutPage(props) {
   };
 
   const handleRepsPress = (index, reps) => {
+    if (isViewOnly) return;
     setPickerInfo((prevState) => {
       return {
         ...prevState,
@@ -68,7 +74,6 @@ function WorkoutPage(props) {
   };
 
   const handleRepsChange = (index, newReps) => {
-    console.log("handleRepsChange");
     props.setWorkout((prevState) => {
       return {
         ...prevState,
@@ -84,10 +89,9 @@ function WorkoutPage(props) {
   };
 
   const setExercises = () => {
-    const { selectedExercises } = props;
     let components = [];
-    for (let i = 0; i < selectedExercises.length; i++) {
-      if (exercises[selectedExercises[i]].name) {
+    for (let i = 0; i < Object.keys(propWorkout.exercises).length; i++) {
+      if (exercises[propWorkout.exercises[i].info.id].hasOwnProperty("name")) {
         const {
           defaultTimeBetweenExercises,
           defaultTimeBetweenSets,
@@ -117,8 +121,8 @@ function WorkoutPage(props) {
           <ExerciseComponent
             key={i}
             index={i}
-            id={selectedExercises[i]}
-            exercise={exercises[selectedExercises[i]]}
+            id={propWorkout.exercises[i].info.id}
+            exercise={exercises[propWorkout.exercises[i].info.id]}
             navigation={props.navigation}
             workout={true}
             timeBetweenSets={timeBetweenSets}
@@ -142,7 +146,7 @@ function WorkoutPage(props) {
   }, [props.workout]);
 
   useEffect(() => {
-    setExercises();
+    !isViewOnly && setExercises();
   }, [workout]);
 
   return (
@@ -156,15 +160,10 @@ function WorkoutPage(props) {
       />
 
       <Text>Workout Page</Text>
-      <Text>{props.workout.generalInfo.title}</Text>
-      <Text>{props.workout.generalInfo.description}</Text>
+      <Text>{propWorkout.generalInfo.title}</Text>
+      <Text>{propWorkout.generalInfo.description}</Text>
 
       {exercisesComponent}
-      {/* WIP, doesn't save yet */}
-      <Button
-        title="Save Workout"
-        onPress={() => console.log("SAVE WORKOUT")}
-      />
     </>
   );
 }

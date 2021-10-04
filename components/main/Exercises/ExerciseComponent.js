@@ -113,7 +113,12 @@ function ExerciseComponent(props) {
                 props.handleRepsPress(props.index, props.reps);
               }}
             >
-              <Text>Repetitions: {props.reps}</Text>
+              <Text>
+                Repetitions: {props.reps} x{" "}
+                {props.exercise.time === -1
+                  ? props.exercise.reps + " reps"
+                  : formatTime(props.exercise.time)}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity

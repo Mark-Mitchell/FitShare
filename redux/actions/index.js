@@ -18,3 +18,10 @@ export const fetchSelectedExercises = (payload) => {
     payload,
   };
 };
+
+export const fetchLocalWorkouts = (payload) => {
+  return {
+    type: "FETCH_LOCAL_WORKOUTS",
+    payload,
+  };
+};

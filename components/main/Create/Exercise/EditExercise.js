@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Platform,
   ScrollView,
+  Switch,
+  Text,
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,6 +26,7 @@ import DropSets from "./DropSets";
 import PickerComponent from "./PickerComponent";
 
 import { defaultEquipment } from "../../../../assets/exercise data/equipment";
+import generateId from "../../../../assets/global functions/generateId";
 
 function EditExercise(props) {
   const initialState = {
@@ -32,7 +35,7 @@ function EditExercise(props) {
     description: "",
     equipment: {},
     time: -1,
-    reps: -1,
+    reps: 1,
     image: "",
     moreInfo: "",
     image: "",
@@ -42,6 +45,19 @@ function EditExercise(props) {
   const [state, setState] = useState(initialState);
 
   const [timeInputStyle, setTimeInputStyle] = useState(styles.input);
+
+  // Timed exercise or Reps based
+  const [isTimedExercise, setIsTimeExercise] = useState(false);
+
+  useEffect(() => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        time: isTimedExercise ? 0 : -1,
+        reps: isTimedExercise ? -1 : 1,
+      };
+    });
+  }, [isTimedExercise]);
 
   const handleInput = (key, value) => {
     setState({
@@ -72,6 +88,7 @@ function EditExercise(props) {
   // Handle Submit
   const localExercises = useSelector((state) => state.exercises);
   const dispatch = useDispatch();
+
   const submitForm = async () => {
     try {
       const id = generateId(localExercises);
@@ -122,11 +139,6 @@ function EditExercise(props) {
     }
   };
 
-  const generateId = (object) => {
-    const idArray = Object.keys(object);
-    return idArray.length > 0 ? Math.max(...idArray) + 1 : 1;
-  };
-
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -155,16 +167,17 @@ function EditExercise(props) {
             title="Equipment Picker"
           />
 
-          <Button
-            style={styles.halfButton}
-            onPress={() => handleInput("time", state.time == -1 ? "" : -1)}
-            title="Time"
-          />
-          <Button
-            style={styles.halfButton}
-            onPress={() => handleInput("reps", state.reps == -1 ? "" : -1)}
-            title="Reps"
-          />
+          <View style={styles.isTimedExerciseContainer}>
+            <Text>Reps </Text>
+            <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={isTimedExercise ? "#f5dd4b" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => setIsTimeExercise((prevState) => !prevState)}
+              value={isTimedExercise}
+            />
+            <Text> Time</Text>
+          </View>
 
           {state.time !== -1 && (
             <PickerComponent handleInput={handleInput} type="time" />
@@ -233,6 +246,13 @@ const styles = StyleSheet.create({
 
   halfButton: {
     flex: 0.5,
+  },
+
+  isTimedExerciseContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
   },
 });
 

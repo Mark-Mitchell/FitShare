@@ -6,7 +6,7 @@ import EditExercise from "./Exercise/EditExercise";
 import EditWorkout from "./Workout/EditWorkout";
 
 function Create(props) {
-  const [editExercise, setEditExercise] = useState(false);
+  const [editExercise, setEditExercise] = useState(true);
   return (
     <SafeAreaView style={GlobalStyles.screenContainer}>
       <Button

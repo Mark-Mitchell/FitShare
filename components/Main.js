@@ -12,7 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { fetchLocalData } from "../redux/actions";
+import { fetchLocalData, fetchLocalWorkouts } from "../redux/actions";
 
 // Mainpages Components
 import Workouts from "./main/Workouts";
@@ -36,12 +36,16 @@ function Main() {
     getLocalData("exercises").then((exercises) =>
       dispatch(fetchLocalData(exercises))
     );
+
+    getLocalData("workouts").then((workouts) =>
+      dispatch(fetchLocalWorkouts(workouts))
+    );
   }, []);
 
   return (
     <Tab.Navigator
       // currently can't set initial route to name, because Exercises needs to load first
-      initialRouteName="Exercises"
+      initialRouteName="Create"
       tabBarOptions={{
         style: { color: "red" },
         activeTintColor: "yellow",
