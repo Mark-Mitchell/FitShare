@@ -196,7 +196,6 @@ function WorkoutPage(props) {
       />
 
       <DeleteConformation
-        navigation={props.navigation}
         modalVisible={deleteModalVisible}
         setModalVisible={setDeleteModalVisible}
         changeOnConfirm={setToBeDeleted}

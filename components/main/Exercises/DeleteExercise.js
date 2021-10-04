@@ -1,5 +1,5 @@
-import React from "react";
-import { Alert, Platform, Pressable } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Platform, Pressable } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
@@ -8,10 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalData } from "../../../redux/actions";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import DeleteConformation from "../../../assets/global functions/DeleteConformation";
 
 function DeleteExercise(props) {
   // Delete Exercise (Exercises) or remove Exercise from Workout (EditWorkout)
   const workout = props.workout ? true : false;
+
+  // Confirmation Modal
+  const [modalVisible, setModalVisible] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState(false);
 
   const globalExercises = useSelector((state) => state.exercises);
   const dispatch = useDispatch();
@@ -21,24 +26,7 @@ function DeleteExercise(props) {
       // remove exercise from workout list
       props.removeItemFromList(props.currentIndex);
     } else {
-      // delete the exercise completely
-      // Platform specific conformation prompt
-      if (Platform.OS === "web") {
-        return confirm("Test") ? deleteExercise() : null;
-      } else {
-        return Alert.alert(
-          globalExercises[props.id].name,
-          "Are you sure you want to delete this exercise?",
-          [
-            {
-              text: "Cancel",
-              onPress: () => null,
-              style: "cancel",
-            },
-            { text: "Delete", onPress: () => deleteExercise() },
-          ]
-        );
-      }
+      setModalVisible(true);
     }
   };
 
@@ -58,19 +46,30 @@ function DeleteExercise(props) {
     await AsyncStorage.setItem("exercises", JSON.stringify(updatedExercises));
     // Remove from Redux Store
     dispatch(fetchLocalData(updatedExercises));
-
-    // Todo: add success message
   };
 
+  useEffect(() => {
+    toBeDeleted && deleteExercise();
+  }, [toBeDeleted]);
+
   return (
-    <Pressable>
-      <MaterialCommunityIcons
-        name="close"
-        color="black"
-        size={20}
-        onPress={handleDeleteExercise}
+    <>
+      <DeleteConformation
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        changeOnConfirm={setToBeDeleted}
+        title="Delete Exercise?"
+        body="Do you really want to delete this Exercise?"
       />
-    </Pressable>
+      <Pressable>
+        <MaterialCommunityIcons
+          name="close"
+          color="black"
+          size={20}
+          onPress={handleDeleteExercise}
+        />
+      </Pressable>
+    </>
   );
 }
 
