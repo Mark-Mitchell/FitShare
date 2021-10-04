@@ -1,8 +1,13 @@
 import React from "react";
 import { Text, Pressable } from "react-native";
+
+import { useSelector } from "react-redux";
+
 import formatTime from "../../../assets/styling/formatTime";
+import calculateWorkoutTime from "./calculateWorkoutTime";
 
 function WorkoutComponent(props) {
+  const exercises = useSelector((state) => state.exercises);
   return (
     <Pressable
       onPress={() =>
@@ -13,7 +18,10 @@ function WorkoutComponent(props) {
         Name: {props.workout.generalInfo.title} ({props.id})
       </Text>
       <Text>Description: {props.workout.generalInfo.description}</Text>
-      <Text>Time: {formatTime(props.workout.generalInfo.totalTime)}</Text>
+      <Text>
+        {/* COMMENTED OUT BECAUSE OF FAULTY TEST EXERCISES IN LOCAL STORAGE ON TEST DEVICES */}
+        {/* Time: {formatTime(calculateWorkoutTime(props.workout, exercises))} */}
+      </Text>
     </Pressable>
   );
 }

@@ -175,9 +175,11 @@ function ExerciseComponent(props) {
           {/* Show delete button when its not displayed in a workout */}
           {props.workout ? null : (
             <View style={styles.deleteButtonContainer}>
-              <Pressable onPress={() => editExercise(props.id)}>
-                <MaterialCommunityIcons name="pencil" size={40} />
-              </Pressable>
+              {!props.reordable && (
+                <Pressable onPress={() => editExercise(props.id)}>
+                  <MaterialCommunityIcons name="pencil" size={40} />
+                </Pressable>
+              )}
               <DeleteExercise
                 id={props.id}
                 workout={props.reordable ? true : false}

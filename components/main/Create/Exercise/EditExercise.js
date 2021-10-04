@@ -31,9 +31,8 @@ import generateId from "../../../../assets/global functions/generateId";
 function EditExercise(props) {
   const localExercises = useSelector((state) => state.exercises);
 
-  // console.log(props.route.params);
   const isEditing = props.hasOwnProperty("route");
-  // console.log(props.hasOwnProperty("route"));
+
   const initialState = isEditing
     ? localExercises[props.route.params.id]
     : {
@@ -134,7 +133,6 @@ function EditExercise(props) {
         : props.navigation.navigate("Exercises");
       // reset equipmentPicker in redux
       dispatch(fetchEquipmentPicker(defaultEquipment));
-      // TODO: give some user feedback
     } catch (error) {
       console.log(error);
     }

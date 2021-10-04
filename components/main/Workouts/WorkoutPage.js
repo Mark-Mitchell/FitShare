@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { Pressable, Text } from "react-native";
 
 import { useSelector } from "react-redux";
 
 import ExerciseComponent from "../Exercises/ExerciseComponent";
 import TimeRepsPicker from "../Create/Workout/TimeRepsPicker";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 function WorkoutPage(props) {
   // get workout from props or through react navigation
@@ -163,6 +164,17 @@ function WorkoutPage(props) {
       <Text>{propWorkout.generalInfo.title}</Text>
       <Text>{propWorkout.generalInfo.description}</Text>
 
+      {isViewOnly && (
+        <>
+          <Pressable
+            onPress={() =>
+              props.navigation.navigate("EditWorkout", { workout: propWorkout })
+            }
+          >
+            <MaterialCommunityIcons name="pencil" size={50} />
+          </Pressable>
+        </>
+      )}
       {exercisesComponent}
     </>
   );
