@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Pressable, Text } from "react-native";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLocalWorkouts } from "../../../redux/actions";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import ExerciseComponent from "../Exercises/ExerciseComponent";
 import TimeRepsPicker from "../Create/Workout/TimeRepsPicker";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import DeleteConformation from "../../../assets/global functions/DeleteConformation";
 
 function WorkoutPage(props) {
   // get workout from props or through react navigation
@@ -13,10 +18,12 @@ function WorkoutPage(props) {
   const propWorkout = isViewOnly ? props.route.params.workout : props.workout;
 
   const exercises = useSelector((state) => state.exercises);
+  const workouts = useSelector((state) => state.workouts);
 
   const [workout, setWorkout] = useState(propWorkout);
   const [exercisesComponent, setExercisesComponent] = useState(null);
 
+  // Modal for TimeRepsPicker
   const [modalVisible, setModalVisible] = useState(false);
   const [pickerInfo, setPickerInfo] = useState({
     time: null,
@@ -25,6 +32,11 @@ function WorkoutPage(props) {
     repsPicker: false,
     editingSingleExercise: true,
   });
+  // Modal for Delete Conformation
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState(false);
+
+  const dispatch = useDispatch();
 
   const handleTimePress = (type, index, time) => {
     if (isViewOnly) return;
@@ -138,6 +150,25 @@ function WorkoutPage(props) {
     setExercisesComponent(components);
   };
 
+  const deleteExercise = async () => {
+    const newState = {
+      ...workouts,
+      [propWorkout.generalInfo.id]: {},
+    };
+
+    // Remove from Redux
+    dispatch(fetchLocalWorkouts(newState));
+
+    // Remove from Local Storage
+    try {
+      await AsyncStorage.setItem("workouts", JSON.stringify(newState));
+    } catch (error) {
+      console.log(error);
+    }
+
+    props.navigation.popToTop();
+  };
+
   useEffect(() => {
     setExercises();
   }, []);
@@ -150,6 +181,10 @@ function WorkoutPage(props) {
     !isViewOnly && setExercises();
   }, [workout]);
 
+  useEffect(() => {
+    toBeDeleted && deleteExercise();
+  }, [toBeDeleted]);
+
   return (
     <>
       <TimeRepsPicker
@@ -158,6 +193,15 @@ function WorkoutPage(props) {
         info={pickerInfo}
         handleTimeChange={handleTimeChange}
         handleRepsChange={handleRepsChange}
+      />
+
+      <DeleteConformation
+        navigation={props.navigation}
+        modalVisible={deleteModalVisible}
+        setModalVisible={setDeleteModalVisible}
+        changeOnConfirm={setToBeDeleted}
+        title="Delete Workout?"
+        body="Do you really want to delete this Workout?"
       />
 
       <Text>Workout Page</Text>
@@ -172,6 +216,9 @@ function WorkoutPage(props) {
             }
           >
             <MaterialCommunityIcons name="pencil" size={50} />
+          </Pressable>
+          <Pressable onPress={() => setDeleteModalVisible(true)}>
+            <MaterialCommunityIcons name="close" size={50} />
           </Pressable>
         </>
       )}

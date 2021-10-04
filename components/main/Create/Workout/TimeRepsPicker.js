@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Platform, View, Text, TouchableOpacity } from "react-native";
 
-// need to use different packages for different platforms
+// different packages for different platforms
 import ModalMobile from "react-native-modal";
 import ModalWeb from "modal-react-native-web";
 

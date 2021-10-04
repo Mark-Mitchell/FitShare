@@ -12,6 +12,7 @@ function Workout(props) {
 
   const fetchReduxWorkouts = () => {
     const workoutComponents = Object.keys(reduxWorkouts).map((id) => {
+      !reduxWorkouts[id].hasOwnProperty("generalInfo") && null;
       return (
         <WorkoutComponent
           key={id}
