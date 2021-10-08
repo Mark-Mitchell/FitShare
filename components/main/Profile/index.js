@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import * as SecureStore from "expo-secure-store";
 import * as Network from "expo-network";
@@ -30,7 +31,7 @@ function Profile() {
   }, []);
 
   return (
-    <>
+    <SafeAreaView>
       {isdeviceSupported ? (
         <>
           {!hasConnection && (
@@ -55,7 +56,7 @@ function Profile() {
           </Text>
         </>
       )}
-    </>
+    </SafeAreaView>
   );
 }
 

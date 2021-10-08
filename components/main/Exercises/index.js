@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, SafeAreaView, Button } from "react-native";
+import { ScrollView, Button } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSelectedExercises } from "../../../redux/actions";
 
-import GlobalStyles from "../../../assets/styling/GlobalStyles";
 import ExerciseComponent from "./ExerciseComponent";
 
 function Exercises(props) {
@@ -59,7 +59,7 @@ function Exercises(props) {
   });
 
   return (
-    <SafeAreaView style={GlobalStyles.screenContainer}>
+    <SafeAreaView>
       <ScrollView>{exerciseComponents}</ScrollView>
       {exerciseSelectable && (
         <Button title="Save" onPress={() => saveSelectedExercises()} />

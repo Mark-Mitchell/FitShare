@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { useSelector } from "react-redux";
 
-import GlobalStyles from "../../../assets/styling/GlobalStyles";
 import WorkoutComponent from "./WorkoutComponent";
 
 function Workout(props) {
@@ -30,7 +31,7 @@ function Workout(props) {
   }, [reduxWorkouts]);
 
   return (
-    <SafeAreaView style={GlobalStyles.screenContainer}>
+    <SafeAreaView>
       <ScrollView>{workoutComponents}</ScrollView>
     </SafeAreaView>
   );

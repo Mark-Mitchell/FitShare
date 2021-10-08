@@ -44,10 +44,10 @@ function Main() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Profile"
+      initialRouteName="Workout"
       tabBarOptions={{
         style: { color: "red" },
-        activeTintColor: "yellow",
+        activeTintColor: "purple",
         inactiveBackgroundColor: "black",
         activeBackgroundColor: "black",
         inactiveTintColor: "white",

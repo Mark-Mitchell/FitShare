@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Button, StyleSheet } from "react-native";
+import { View, Button, StyleSheet, Dimensions } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalWorkouts } from "../../../../redux/actions";
@@ -142,14 +142,12 @@ function EditWorkout(props) {
           />
         </>
       )}
-
       {/* Step Two (General Info & Default rest times) */}
       {step === 2 && (
         <>
           <Form setWorkout={setWorkout} workout={workout} />
         </>
       )}
-
       {/* Step Three (Modify default rest times and save) */}
       {step === 3 && (
         <>
@@ -162,7 +160,6 @@ function EditWorkout(props) {
           <Button title="Save Workout" onPress={() => saveWorkout()} />
         </>
       )}
-
       {/* Step Controls (always shown on the bottom) */}
       <View style={styles.stepControl}>
         <Button title="Step 1" onPress={() => setStep(1)} />
@@ -175,10 +172,13 @@ function EditWorkout(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
+    height: Dimensions.get("window").height - 100,
   },
   stepControl: {
     flex: 1,
+    flexDirection: "column",
+    // alignSelf: "flex-end",
     justifyContent: "flex-end",
   },
 });
