@@ -15,3 +15,6 @@ web
 .DS_Store
 
 .vscode
+
+# config file with api address
+api.config.js

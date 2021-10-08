@@ -1,36 +1,32 @@
 import React, { useState } from "react";
-import { Button, TextInput, Text } from "react-native";
+import { TextInput, Button, Text } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { saveAccessToken } from "./accessToken";
 
-function Register() {
-  const [username, setUsername] = useState("");
+function Login() {
+  const [submitErrors, setSubmitErrors] = useState([]);
+  const [submitSuccess, setSubmitSuccess] = useState(null);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
 
-  const [submitSuccess, setSubmitSuccess] = useState(null);
-  const [submitErrors, setSubmitErrors] = useState([]);
-
-  const register = async () => {
+  const login = async () => {
     let errors = [];
-    // check user input if valid
-    if (!username)
-      errors.push(<Text key="noUsername">Please provide a username.</Text>);
+
     if (!email)
       errors.push(<Text key="noEmail">Please provide an email.</Text>);
     if (!password)
       errors.push(<Text key="noPassword">Please provide a password.</Text>);
-    // todo check if email is valid with Regex
-    // TODO: PASSWORD REQS
 
     setSubmitErrors(errors);
 
-    // if input is okay send input to API
+    // send login req to API if no errors
     if (errors.length === 0) {
       try {
         let response = await fetch(
-          "https://fitshare-api.herokuapp.com/api/auth/signup",
+          "https://fitshare-api.herokuapp.com/api/auth/signin",
           {
             method: "POST",
             headers: {
@@ -38,23 +34,30 @@ function Register() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              username,
-              password,
               email,
+              password,
+              // email: "testingmail",
             }),
           }
         );
         let json = await response.json();
-        if (json.message.includes("ERROR")) {
-          setSubmitSuccess(null);
-          setSubmitErrors(<Text>{json.message}</Text>);
+
+        if (!json.accessToken) {
+          return setSubmitErrors(<Text>{json.message}</Text>);
         } else {
-          setSubmitErrors(null);
-          setSubmitSuccess(<Text>{json.message}</Text>);
+          const saveToken = await saveAccessToken(json.accessToken);
+
+          // if saveAccessToken() return an error display it else show success message
+          if (saveToken) {
+            return setSubmitErrors(<Text>{saveToken}</Text>);
+          } else {
+            return setSubmitSuccess(
+              <Text>You have successfully logged in.</Text>
+            );
+          }
         }
-        return console.log(json);
       } catch (err) {
-        console.log("HERE" + err);
+        console.log(err);
       }
     }
   };
@@ -63,11 +66,6 @@ function Register() {
     <>
       {submitErrors}
       {submitSuccess}
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={(input) => setUsername(input)}
-      />
       <TextInput
         placeholder="Email Address"
         value={email}
@@ -85,9 +83,9 @@ function Register() {
         size={30}
         onPress={() => setHidePassword((prevState) => !prevState)}
       />
-      <Button title="Register" onPress={() => register()} />
+      <Button title="Login" onPress={() => login()} />
     </>
   );
 }
 
-export default Register;
+export default Login;

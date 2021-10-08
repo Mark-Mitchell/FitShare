@@ -19,8 +19,6 @@ const store = createStore(
 
 // Components (not on bottomTabNavigator)
 import Main from "./components/Main";
-import Landing from "./components/auth/Landing";
-import Register from "./components/auth/Register";
 import PlayExercise from "./components/PlayExercise";
 import Exercises from "./components/main/Exercises";
 import EquipmentPicker from "./components/main/Create/Exercise/EquipmentPicker";
@@ -40,8 +38,6 @@ function App() {
             component={Main}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="Landing" component={Landing} />
-          <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="PlayExercise" component={PlayExercise} />
           <Stack.Screen name="Exercises" component={Exercises} />
           <Stack.Screen name="EquipmentPicker" component={EquipmentPicker} />
