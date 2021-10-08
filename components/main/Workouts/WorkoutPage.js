@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalWorkouts } from "../../../redux/actions";
@@ -203,8 +203,9 @@ function WorkoutPage(props) {
         body="Do you really want to delete this Workout?"
       />
 
-      <Text>Workout Page</Text>
+      <Text style={styles.title}>Title:</Text>
       <Text>{propWorkout.generalInfo.title}</Text>
+      <Text style={styles.title}>Description:</Text>
       <Text>{propWorkout.generalInfo.description}</Text>
 
       {isViewOnly && (
@@ -225,5 +226,11 @@ function WorkoutPage(props) {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  title: {
+    fontWeight: "bold",
+  },
+});
 
 export default WorkoutPage;

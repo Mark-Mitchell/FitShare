@@ -15,6 +15,7 @@ import { equipmentIcons } from "../../../assets/exercise data/equipment";
 
 import DeleteExercise from "./DeleteExercise";
 import formatTime from "../../../assets/styling/formatTime";
+import { lightBackgroundColor } from "../../../assets/styling/GlobalColors";
 
 function ExerciseComponent(props) {
   // toggling the full exercise information
@@ -46,7 +47,7 @@ function ExerciseComponent(props) {
 
   const containerStyle = {
     flexDirection: "row",
-    backgroundColor: props.selectedPicker ? "blue" : "#FFF",
+    backgroundColor: props.selectedPicker ? "blue" : lightBackgroundColor,
     padding: 5,
     margin: 5,
     height: 100,

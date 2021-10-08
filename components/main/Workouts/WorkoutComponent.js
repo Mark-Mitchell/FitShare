@@ -1,9 +1,10 @@
 import React from "react";
-import { Text, Pressable } from "react-native";
+import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 
 import { useSelector } from "react-redux";
 
 import formatTime from "../../../assets/styling/formatTime";
+import { lightBackgroundColor } from "../../../assets/styling/GlobalColors";
 import calculateWorkoutTime from "./calculateWorkoutTime";
 
 function WorkoutComponent(props) {
@@ -17,18 +18,55 @@ function WorkoutComponent(props) {
               workout: props.workout,
             })
           }
+          style={styles.container}
         >
-          <Text>
-            Name: {props.workout.generalInfo.title} ({props.id})
-          </Text>
-          <Text>Description: {props.workout.generalInfo.description}</Text>
-          <Text>
-            Time: {formatTime(calculateWorkoutTime(props.workout, exercises))}
-          </Text>
+          <View style={styles.content}>
+            <Image
+              source={require("../../../images/WIP.jpg")}
+              style={styles.image}
+            />
+            <View styles={styles.info}>
+              <Text style={styles.title}>Name:</Text>
+              <Text>
+                {props.workout.generalInfo.title} ({props.id})
+              </Text>
+              <Text style={styles.title}>Description:</Text>
+              <Text>
+                {props.workout.generalInfo.description
+                  ? props.workout.generalInfo.description
+                  : "\n"}
+              </Text>
+              <Text style={styles.title}>Estimated Time:</Text>
+              <Text>
+                {formatTime(calculateWorkoutTime(props.workout, exercises))}
+              </Text>
+            </View>
+          </View>
         </Pressable>
       )}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  image: {
+    height: "auto",
+    width: "35%",
+  },
+  content: {
+    flexDirection: "row",
+    paddingLeft: 10,
+  },
+  info: {
+    paddingLeft: 20,
+  },
+  container: {
+    padding: 10,
+    backgroundColor: lightBackgroundColor,
+  },
+  title: {
+    fontWeight: "bold",
+  },
+});
 
 export default WorkoutComponent;
