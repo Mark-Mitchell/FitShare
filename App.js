@@ -27,6 +27,7 @@ import Create from "./components/main/Create";
 import WorkoutPage from "./components/main/Workouts/WorkoutPage";
 import EditExercise from "./components/main/Create/Exercise/EditExercise";
 import EditWorkout from "./components/main/Create/Workout/EditWorkout";
+import PlayWorkout from "./components/PlayWorkout";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           <Stack.Screen name="WorkoutPage" component={WorkoutPage} />
           <Stack.Screen name="EditExercise" component={EditExercise} />
           <Stack.Screen name="EditWorkout" component={EditWorkout} />
+          <Stack.Screen name="PlayWorkout" component={PlayWorkout} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

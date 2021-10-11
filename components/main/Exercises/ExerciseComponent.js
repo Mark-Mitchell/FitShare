@@ -9,17 +9,26 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { useSelector } from "react-redux";
+
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { equipmentIcons } from "../../../assets/exercise data/equipment";
-
-import DeleteExercise from "./DeleteExercise";
 import formatTime from "../../../assets/styling/formatTime";
+import getEquipmentIcons from "./getEquipmentIcons";
+import DeleteExercise from "./DeleteExercise";
+
 import { lightBackgroundColor } from "../../../assets/styling/GlobalColors";
 
 function ExerciseComponent(props) {
+  const exercises = useSelector((state) => state.exercises);
+
+  const isNextExerciseInWorkout = !(
+    props.hasOwnProperty("hideControls") && props.hideControls
+  );
   // toggling the full exercise information
-  const [selected, setSelected] = useState(false);
+  const [selected, setSelected] = useState(
+    isNextExerciseInWorkout ? false : true
+  );
 
   // get default image when on web or none was provided
   const imageUri =
@@ -27,18 +36,8 @@ function ExerciseComponent(props) {
       ? { uri: props.image }
       : require("../../../images/WIP.jpg");
 
-  // filter the equipment that is needed and display its icon
-  const equipment = Object.keys(props.exercise.equipment).filter(
-    (equipmentItem) => props.exercise.equipment[equipmentItem] && equipmentItem
-  );
-  const equipmentComponents = equipment.map((equipmentItem) => (
-    <MaterialCommunityIcons
-      key={equipmentItem}
-      name={equipmentIcons[equipmentItem]}
-      color={"black"}
-      size={10}
-    />
-  ));
+  // get all equipnment icons
+  const equipmentComponents = getEquipmentIcons(exercises[props.id].equipment);
 
   // Toggle background colour after a long press to select exercise (to create a workout)
   const handleLongPress = (id) => {
@@ -65,7 +64,8 @@ function ExerciseComponent(props) {
     <Pressable
       style={containerStyle}
       onPress={() => handlePress()}
-      onLongPress={() => handleLongPress(props.exercise.id)}
+      onLongPress={() => handleLongPress(props.id)}
+      // onLongPress={() => handleLongPress(props.exercise.id)}
     >
       {
         // order in list for createWorkout
@@ -86,7 +86,7 @@ function ExerciseComponent(props) {
         <Image source={imageUri} style={styles.img} />
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>{props.exercise.name}</Text>
+        <Text style={styles.title}>{exercises[props.id].name}</Text>
 
         <View style={styles.equipmentContainer}>{equipmentComponents}</View>
 
@@ -95,18 +95,22 @@ function ExerciseComponent(props) {
             <Text style={styles.title}>Exercise Information:</Text>
 
             <Text>Description:</Text>
-            <Text style={styles.description}>{props.exercise.description}</Text>
+            <Text style={styles.description}>
+              {exercises[props.id].description}
+            </Text>
 
-            {props.exercise.time !== -1 && (
-              <Text>Time: {props.exercise.time}</Text>
+            {exercises[props.id].time !== -1 && (
+              <Text>Time: {exercises[props.id].time}</Text>
             )}
-            {props.exercise.reps !== -1 && (
-              <Text>Reps: {props.exercise.reps}</Text>
+            {exercises[props.id].reps !== -1 && (
+              <Text>Reps: {exercises[props.id].reps}</Text>
             )}
 
             <Text>More Information:</Text>
-            <Text>{props.exercise.moreInfo}</Text>
-            <Text>Drop Sets: {props.exercise.dropSets ? "Yes" : "No"}</Text>
+            <Text>{exercises[props.id].moreInfo}</Text>
+            <Text>
+              Drop Sets: {exercises[props.id].dropSets ? "Yes" : "No"}
+            </Text>
           </View>
         )}
 
@@ -120,9 +124,9 @@ function ExerciseComponent(props) {
             >
               <Text>
                 Repetitions: {props.reps} x{" "}
-                {props.exercise.time === -1
-                  ? props.exercise.reps + " reps"
-                  : formatTime(props.exercise.time)}
+                {exercises[props.id].time === -1
+                  ? exercises[props.id].reps + " reps"
+                  : formatTime(exercises[props.id].time)}
               </Text>
             </TouchableOpacity>
 
@@ -160,34 +164,38 @@ function ExerciseComponent(props) {
       </View>
 
       {/* Play / Delete Buttons */}
-      {!props.exerciseSelectable && (
+      {isNextExerciseInWorkout && (
         <>
-          <View style={styles.playButtonContainer}>
-            <MaterialCommunityIcons
-              name="play-outline"
-              size={30}
-              onPress={() =>
-                props.navigation.navigate("PlayExercise", {
-                  exercise: props.exercise,
-                })
-              }
-            />
-          </View>
-          {/* Show delete button when its not displayed in a workout */}
-          {props.workout ? null : (
-            <View style={styles.deleteButtonContainer}>
-              {!props.reordable && (
-                <Pressable onPress={() => editExercise(props.id)}>
-                  <MaterialCommunityIcons name="pencil" size={40} />
-                </Pressable>
+          {!props.exerciseSelectable && (
+            <>
+              <View style={styles.playButtonContainer}>
+                <MaterialCommunityIcons
+                  name="play-outline"
+                  size={30}
+                  onPress={() =>
+                    props.navigation.navigate("PlayExercise", {
+                      id: props.id,
+                    })
+                  }
+                />
+              </View>
+              {/* Show delete button when its not displayed in a workout */}
+              {props.workout ? null : (
+                <View style={styles.deleteButtonContainer}>
+                  {!props.reordable && (
+                    <Pressable onPress={() => editExercise(props.id)}>
+                      <MaterialCommunityIcons name="pencil" size={40} />
+                    </Pressable>
+                  )}
+                  <DeleteExercise
+                    id={props.id}
+                    workout={props.reordable ? true : false}
+                    removeItemFromList={props.removeItemFromList}
+                    currentIndex={props.currentIndex}
+                  />
+                </View>
               )}
-              <DeleteExercise
-                id={props.id}
-                workout={props.reordable ? true : false}
-                removeItemFromList={props.removeItemFromList}
-                currentIndex={props.currentIndex}
-              />
-            </View>
+            </>
           )}
         </>
       )}

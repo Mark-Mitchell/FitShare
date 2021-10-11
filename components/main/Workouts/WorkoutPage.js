@@ -220,6 +220,13 @@ function WorkoutPage(props) {
           <Pressable onPress={() => setDeleteModalVisible(true)}>
             <MaterialCommunityIcons name="close" size={50} />
           </Pressable>
+          <MaterialCommunityIcons
+            name="play"
+            size={50}
+            onPress={() =>
+              props.navigation.navigate("PlayWorkout", { workout: propWorkout })
+            }
+          />
         </>
       )}
       {exercisesComponent}
