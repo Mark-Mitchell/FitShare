@@ -85,14 +85,14 @@ function DownloadUnlistedWorkout(props) {
 
   return (
     <>
-      {error && <Text>{error}</Text>}
+      {!!error && <Text>{error}</Text>}
       <TextInput
         placeholder="Workout ID"
         value={slug}
         onChangeText={(text) => setSlug(text)}
       />
       <Button title="Search & Download" onPress={() => fetchSlug()} />
-      {workout && (
+      {!!workout && (
         <WorkoutComponent
           key={slug}
           navigation={props.navigation}
