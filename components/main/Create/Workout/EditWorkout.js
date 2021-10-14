@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Button, StyleSheet, Dimensions } from "react-native";
+import { View, Button, StyleSheet, Dimensions, ScrollView } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalWorkouts } from "../../../../redux/actions";
@@ -68,7 +68,10 @@ function EditWorkout(props) {
           newExerciseState = {
             ...newExerciseState,
             [i]: {
-              info: exercises[selectedExercises[i]],
+              // info: exercises[selectedExercises[i]],
+              info: {
+                id: exercises[selectedExercises[i]].id,
+              },
               position: i + 1,
               timeBetweenExercises,
               timeBetweenSets,
@@ -127,46 +130,48 @@ function EditWorkout(props) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Step One (Chosing the exercises and their order) */}
-      {step === 1 && (
-        <>
-          <Button
-            title="Add Exercise"
-            onPress={() => props.navigation.navigate("ExercisePicker")}
-          />
-          <ReordableList
-            navigation={props.navigation}
-            setSelectedExercises={setSelectedExercises}
-            selectedExercises={selectedExercises}
-          />
-        </>
-      )}
-      {/* Step Two (General Info & Default rest times) */}
-      {step === 2 && (
-        <>
-          <Form setWorkout={setWorkout} workout={workout} />
-        </>
-      )}
-      {/* Step Three (Modify default rest times and save) */}
-      {step === 3 && (
-        <>
-          <WorkoutPage
-            selectedExercises={selectedExercises}
-            navigation={props.navigation}
-            workout={workout}
-            setWorkout={setWorkout}
-          />
-          <Button title="Save Workout" onPress={() => saveWorkout()} />
-        </>
-      )}
-      {/* Step Controls (always shown on the bottom) */}
-      <View style={styles.stepControl}>
-        <Button title="Step 1" onPress={() => setStep(1)} />
-        <Button title="Step 2" onPress={() => setStep(2)} />
-        <Button title="Step 3" onPress={() => setStep(3)} />
+    <ScrollView>
+      <View style={styles.container}>
+        {/* Step One (Chosing the exercises and their order) */}
+        {step === 1 && (
+          <>
+            <Button
+              title="Add Exercise"
+              onPress={() => props.navigation.navigate("ExercisePicker")}
+            />
+            <ReordableList
+              navigation={props.navigation}
+              setSelectedExercises={setSelectedExercises}
+              selectedExercises={selectedExercises}
+            />
+          </>
+        )}
+        {/* Step Two (General Info & Default rest times) */}
+        {step === 2 && (
+          <>
+            <Form setWorkout={setWorkout} workout={workout} />
+          </>
+        )}
+        {/* Step Three (Modify default rest times and save) */}
+        {step === 3 && (
+          <>
+            <WorkoutPage
+              selectedExercises={selectedExercises}
+              navigation={props.navigation}
+              workout={workout}
+              setWorkout={setWorkout}
+            />
+            <Button title="Save Workout" onPress={() => saveWorkout()} />
+          </>
+        )}
+        {/* Step Controls (always shown on the bottom) */}
+        <View style={styles.stepControl}>
+          <Button title="Step 1" onPress={() => setStep(1)} />
+          <Button title="Step 2" onPress={() => setStep(2)} />
+          <Button title="Step 3" onPress={() => setStep(3)} />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

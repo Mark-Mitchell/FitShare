@@ -227,6 +227,15 @@ function WorkoutPage(props) {
               props.navigation.navigate("PlayWorkout", { workout: propWorkout })
             }
           />
+          <MaterialCommunityIcons
+            name="share"
+            size={50}
+            onPress={() =>
+              props.navigation.navigate("ShareWorkout", {
+                workout: propWorkout,
+              })
+            }
+          />
         </>
       )}
       {exercisesComponent}

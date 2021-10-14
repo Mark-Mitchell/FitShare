@@ -5,6 +5,31 @@ import { getAccessToken, saveAccessToken } from "../../auth/accessToken";
 import getUserInfo from "../../auth/getUserInfo";
 
 function Test() {
+  const uploadWorkout = async () => {
+    const token = await getAccessToken();
+    try {
+      let response = await fetch(apiURL + "api/unlistedWorkout/upload", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "x-access-token": token,
+        },
+        body: JSON.stringify({
+          workout: "test",
+          // id: 999,
+          userId: 1,
+          // email: "test",
+        }),
+      });
+      console.log(response);
+      let json = await response.json();
+      return console.log(json);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const fetchAPI = async () => {
     try {
       let response = await fetch(apiURL + "api/auth/signup", {
@@ -15,8 +40,8 @@ function Test() {
         },
         body: JSON.stringify({
           username: "test",
-          password: "test",
-          email: "test",
+          password: "sdkjksjdkjdjdsk",
+          email: "test@test.com",
         }),
       });
       let json = await response.json();
@@ -35,13 +60,12 @@ function Test() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: "test",
-          password: "test",
+          email: "test@test.com",
+          password: "sdkjksjdkjdjdsk",
         }),
       });
       let json = await response.json();
-      saveAccessToken(json.accessToken);
-      return console.log(json);
+      return saveAccessToken(json.accessToken);
     } catch (err) {
       console.log(err);
     }
@@ -50,20 +74,17 @@ function Test() {
   const token = async () => {
     try {
       const token = await getAccessToken();
-      console.log("Token from Local: " + token);
 
       const response = await fetch(apiURL + "api/test/user", {
         method: "GET",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "x-access-token": "token",
+          "x-access-token": token,
         },
       });
       const json = await response.json();
 
-      console.log(json);
-      console.log(json.message.includes("ERROR"));
       if (json.message.includes("TokenExpiredError")) {
         return console.log("LOGIN AGAIN; TOKEN EXPIRED");
       } else {
@@ -115,6 +136,7 @@ function Test() {
         title="Get User Info"
         onPress={async () => console.log(await getUserInfo())}
       />
+      <Button title="Upload Unlisted Workout" onPress={() => uploadWorkout()} />
     </>
   );
 }

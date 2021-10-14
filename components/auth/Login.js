@@ -3,8 +3,9 @@ import { TextInput, Button, Text } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { saveAccessToken } from "./accessToken";
+import { apiURL } from "../../assets/config/api.config";
 
-function Login() {
+function Login(props) {
   const [submitErrors, setSubmitErrors] = useState([]);
   const [submitSuccess, setSubmitSuccess] = useState(null);
 
@@ -25,25 +26,21 @@ function Login() {
     // send login req to API if no errors
     if (errors.length === 0) {
       try {
-        let response = await fetch(
-          "https://fitshare-api.herokuapp.com/api/auth/signin",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email,
-              password,
-              // email: "testingmail",
-            }),
-          }
-        );
+        let response = await fetch(apiURL + "api/auth/signin", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        });
         let json = await response.json();
 
         if (!json.accessToken) {
-          return setSubmitErrors(<Text>{json.message}</Text>);
+          return setSubmitErrors(<Text key="json-error">{json.message}</Text>);
         } else {
           const saveToken = await saveAccessToken(json.accessToken);
 

@@ -40,6 +40,12 @@ const getUserInfo = async () => {
         loggedIn: false,
         error: "InvalidToken",
       };
+    } else if (json.message.includes("UserDoesNotExist")) {
+      output = {
+        ...output,
+        loggedIn: false,
+        error: "UserDoesNotExist",
+      };
     } else if (json.message.includes("SUCCESS")) {
       output = {
         ...output,

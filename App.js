@@ -28,6 +28,8 @@ import WorkoutPage from "./components/main/Workouts/WorkoutPage";
 import EditExercise from "./components/main/Create/Exercise/EditExercise";
 import EditWorkout from "./components/main/Create/Workout/EditWorkout";
 import PlayWorkout from "./components/PlayWorkout";
+import ShareWorkout from "./components/main/Workouts/ShareWorkout";
+import DownloadUnlistedWorkout from "./components/main/Workouts/DownloadUnlistedWorkout";
 
 function App() {
   return (
@@ -48,6 +50,11 @@ function App() {
           <Stack.Screen name="EditExercise" component={EditExercise} />
           <Stack.Screen name="EditWorkout" component={EditWorkout} />
           <Stack.Screen name="PlayWorkout" component={PlayWorkout} />
+          <Stack.Screen name="ShareWorkout" component={ShareWorkout} />
+          <Stack.Screen
+            name="DownloadUnlistedWorkout"
+            component={DownloadUnlistedWorkout}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

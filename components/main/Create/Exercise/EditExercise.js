@@ -140,8 +140,8 @@ function EditExercise(props) {
 
   return (
     <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
+    // contentContainerStyle={{ flexGrow: 1 }}
+    // keyboardShouldPersistTaps="handled"
     >
       <View>
         <View style={styles.container}>
