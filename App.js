@@ -42,6 +42,7 @@ function App() {
       screens: {
         Home: "",
         PrivacyPolicy: "/privacypolicy",
+        AppInfo: "/support",
       },
     },
   };
