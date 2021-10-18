@@ -17,4 +17,4 @@ web
 .vscode
 
 # config file with api address
-api.config.js
+#api.config.js
