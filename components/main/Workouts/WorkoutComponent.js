@@ -89,8 +89,14 @@ function WorkoutComponent(props) {
                 props.workout.generalInfo.slug
               ) && (
                 <>
-                  <Text style={{ fontSize: 12, fontStyle: "italic" }}>
-                    Online Workout (ID): {props.workout.generalInfo.slug} -
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontStyle: "italic",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    Online Workout (ID): {props.workout.generalInfo.slug} {"\n"}
                     Creator: {props.workout.generalInfo.creatorUsername}
                   </Text>
                 </>
