@@ -71,7 +71,8 @@ function ReordableList(props) {
     for (let i = 0; i < selectedExercises.length; i++) {
       // Only list items that are not empty (=deleted)
       const id = selectedExercises[i];
-      if (exercises[id].name) {
+      const isDefaultExercise = id.includes("d");
+      if (isDefaultExercise || exercises[id].name) {
         selectedExercisesComponents.push(
           <ExerciseComponent
             key={currentIndex}
@@ -82,6 +83,7 @@ function ReordableList(props) {
             openModal={openModal}
             removeItemFromList={removeItemFromList}
             currentIndex={currentIndex}
+            defaultExercise={isDefaultExercise}
           />
         );
         currentIndex += 1;

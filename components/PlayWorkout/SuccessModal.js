@@ -15,7 +15,12 @@ function DeleteConformation(props) {
   };
 
   const content = (
-    <View style={GlobalStyles.modalContent}>
+    <View
+      style={[
+        GlobalStyles.modalContent,
+        { alignItems: "center", justifyContent: "center" },
+      ]}
+    >
       <Text>Congratulations, you have finished your workout!</Text>
       <MaterialCommunityIcons
         name="check-box-multiple-outline"
@@ -24,7 +29,7 @@ function DeleteConformation(props) {
       />
 
       <TouchableOpacity
-        style={GlobalStyles.modalButton}
+        style={[GlobalStyles.modalButton, { width: "100%" }]}
         onPress={() => {
           handleConfirm();
         }}

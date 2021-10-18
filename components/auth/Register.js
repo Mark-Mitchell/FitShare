@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { Button, TextInput, Text } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { apiURL } from "../../assets/config/api.config";
 
 import commonPassword from "common-password";
+import GlobalStyles from "../../assets/styling/GlobalStyles";
+import { Input } from "react-native-magnus";
+import Loading from "../Loading";
 
-function Register() {
+function Register(props) {
+  const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,15 +23,27 @@ function Register() {
     let errors = [];
     // check user input if valid
     if (!username)
-      errors.push(<Text key="noUsername">Please provide a username.</Text>);
+      errors.push(
+        <Text key="noUsername" style={GlobalStyles.errorText}>
+          Please provide a username.
+        </Text>
+      );
     if (!email)
-      errors.push(<Text key="noEmail">Please provide an email.</Text>);
+      errors.push(
+        <Text key="noEmail" style={GlobalStyles.errorText}>
+          Please provide an email.
+        </Text>
+      );
     if (!password)
-      errors.push(<Text key="noPassword">Please provide a password.</Text>);
+      errors.push(
+        <Text key="noPassword" style={GlobalStyles.errorText}>
+          Please provide a password.
+        </Text>
+      );
 
     if (password.length < 8) {
       errors.push(
-        <Text key="shortPassword">
+        <Text key="shortPassword" style={GlobalStyles.errorText}>
           Your password is too short. Please use a password that is at least 8
           characters long.
         </Text>
@@ -35,7 +51,7 @@ function Register() {
     } else {
       if (commonPassword(password))
         errors.push(
-          <Text key="common-password">
+          <Text key="common-password" style={GlobalStyles.errorText}>
             Your password is too easy to guess. Please try another password.
           </Text>
         );
@@ -49,7 +65,7 @@ function Register() {
 
     if (!validateEmail(email))
       errors.push(
-        <Text key="invalid-email">
+        <Text key="invalid-email" style={GlobalStyles.errorText}>
           Your email is invalid. Please use a valid email address.
         </Text>
       );
@@ -58,6 +74,7 @@ function Register() {
 
     // if input is okay send input to API
     if (errors.length === 0) {
+      setLoading(true);
       try {
         let response = await fetch(apiURL + "api/auth/signup", {
           method: "POST",
@@ -68,19 +85,25 @@ function Register() {
           body: JSON.stringify({
             username,
             password,
-            email,
+            email: email.toLocaleLowerCase(),
           }),
         });
         let json = await response.json();
         if (json.message.includes("ERROR")) {
           setSubmitSuccess(null);
-          setSubmitErrors(<Text>{json.message}</Text>);
+          setSubmitErrors(
+            <Text style={GlobalStyles.errorText}>{json.message}</Text>
+          );
         } else {
           setSubmitErrors(null);
-          setSubmitSuccess(<Text>{json.message}</Text>);
+          setSubmitSuccess(
+            <Text style={GlobalStyles.successText}>{json.message}</Text>
+          );
         }
+        setLoading(false);
         return;
       } catch (err) {
+        setLoading(false);
         console.log("HERE" + err);
       }
     }
@@ -88,31 +111,78 @@ function Register() {
 
   return (
     <>
-      {submitErrors}
-      {submitSuccess}
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={(input) => setUsername(input)}
-      />
-      <TextInput
-        placeholder="Email Address"
-        value={email}
-        onChangeText={(input) => setEmail(input)}
-        keyboardType="email-address"
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={(input) => setPassword(input)}
-        secureTextEntry={hidePassword}
-      />
-      <MaterialCommunityIcons
-        name="eye-check"
-        size={30}
-        onPress={() => setHidePassword((prevState) => !prevState)}
-      />
-      <Button title="Register" onPress={() => register()} />
+      {!loading ? (
+        <>
+          {submitErrors}
+          {submitSuccess}
+          <Input
+            prefix={
+              <>
+                <MaterialCommunityIcons name="human" size={18} />
+                <Text> Username</Text>
+              </>
+            }
+            fontSize={18}
+            style={GlobalStyles.defaultInput}
+            value={username}
+            onChangeText={(input) => setUsername(input)}
+          />
+          <Input
+            prefix={
+              <>
+                <MaterialCommunityIcons name="email" size={18} />
+                <Text> Email</Text>
+              </>
+            }
+            fontSize={18}
+            style={GlobalStyles.defaultInput}
+            placeholder="Email Address"
+            value={email}
+            onChangeText={(input) => setEmail(input)}
+            keyboardType="email-address"
+          />
+          <Input
+            prefix={
+              <>
+                <MaterialCommunityIcons
+                  name="eye-check"
+                  size={18}
+                  onPress={() => setHidePassword((prevState) => !prevState)}
+                />
+                <Text> Password</Text>
+              </>
+            }
+            fontSize={18}
+            style={GlobalStyles.defaultInput}
+            placeholder="Password"
+            value={password}
+            onChangeText={(input) => setPassword(input)}
+            secureTextEntry={hidePassword}
+          />
+
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("Profile")}
+          >
+            <Text
+              style={[
+                GlobalStyles.link,
+                { textAlign: "center", paddingTop: 10 },
+              ]}
+            >
+              Already have an account? Login here.
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={GlobalStyles.defaultButton}
+            onPress={() => register()}
+          >
+            <Text style={GlobalStyles.defaultButtonText}>Register</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <Loading moreInfo="Registering a new account..." />
+      )}
     </>
   );
 }

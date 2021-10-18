@@ -25,3 +25,10 @@ export const fetchLocalWorkouts = (payload) => {
     payload,
   };
 };
+
+export const fetchDefaultExercises = (payload) => {
+  return {
+    type: "FETCH_DEFAULT_EXERCISES",
+    payload,
+  };
+};

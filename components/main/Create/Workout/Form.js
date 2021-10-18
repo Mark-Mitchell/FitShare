@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { Input } from "react-native-magnus";
+
 import formatTime from "../../../../assets/styling/formatTime";
+import GlobalStyles from "../../../../assets/styling/GlobalStyles";
 import TimeRepsPicker from "./TimeRepsPicker";
 
 function Form(props) {
@@ -16,7 +19,7 @@ function Form(props) {
     timeBetweenSets: props.workout.generalInfo.defaultTimeBetweenSets,
     timeBetweenExercises: props.workout.generalInfo.defaultTimeBetweenExercises,
   });
-  // const [reps, setReps] = useState(0);
+
   const [pickerInfo, setPickerInfo] = useState({
     index: null,
     repsPicker: false,
@@ -95,15 +98,19 @@ function Form(props) {
       />
 
       <Text>General Workout Settings</Text>
-      <TextInput
-        placeholder="Workout Title"
+      <Input
+        prefix={<Text>Title: </Text>}
+        style={GlobalStyles.defaultInput}
         value={title}
         onChangeText={(value) => setTitle(value)}
       />
-      <TextInput
-        placeholder="Description"
+      <Input
+        prefix={<Text>Description: </Text>}
+        placeholder="(optional)"
+        style={GlobalStyles.defaultInput}
         value={description}
         onChangeText={(value) => setDescription(value)}
+        multiline={true}
       />
 
       <TouchableOpacity
@@ -116,9 +123,15 @@ function Form(props) {
           });
           setModalVisible(true);
         }}
+        style={[
+          GlobalStyles.optionButton,
+          {
+            width: "90%",
+          },
+        ]}
       >
-        <Text>
-          Default Repetitions: {props.workout.generalInfo.defaultReps}
+        <Text style={GlobalStyles.optionButtonText}>
+          Default Sets: {props.workout.generalInfo.defaultReps}
         </Text>
       </TouchableOpacity>
 
@@ -133,8 +146,16 @@ function Form(props) {
           });
           setModalVisible(true);
         }}
+        style={[
+          GlobalStyles.optionButton,
+          {
+            width: "90%",
+          },
+        ]}
       >
-        <Text>Time Between Sets: {formattedTime.timeBetweenSets}</Text>
+        <Text style={GlobalStyles.optionButtonText}>
+          Time Between Sets: {formattedTime.timeBetweenSets}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -148,8 +169,14 @@ function Form(props) {
           });
           setModalVisible(true);
         }}
+        style={[
+          GlobalStyles.optionButton,
+          {
+            width: "90%",
+          },
+        ]}
       >
-        <Text>
+        <Text style={GlobalStyles.optionButtonText}>
           Time Between Exercises: {formattedTime.timeBetweenExercises}
         </Text>
       </TouchableOpacity>

@@ -17,10 +17,22 @@ import formatTime from "../../../assets/styling/formatTime";
 import getEquipmentIcons from "./getEquipmentIcons";
 import DeleteExercise from "./DeleteExercise";
 
-import { lightBackgroundColor } from "../../../assets/styling/GlobalColors";
+import {
+  defaultColor,
+  lightBackgroundColor,
+} from "../../../assets/styling/GlobalColors";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
+import { getRandomWorkoutImg } from "../../../assets/global functions/getRandomWorkoutImg";
 
 function ExerciseComponent(props) {
   const exercises = useSelector((state) => state.exercises);
+  const defaultExercises = useSelector((state) => state.defaultExercises);
+
+  const isDefaultExercise = JSON.stringify(props.id).includes("d");
+
+  const exercise = isDefaultExercise
+    ? defaultExercises[props.id]
+    : exercises[props.id];
 
   const isNextExerciseInWorkout = !(
     props.hasOwnProperty("hideControls") && props.hideControls
@@ -31,13 +43,16 @@ function ExerciseComponent(props) {
   );
 
   // get default image when on web or none was provided
-  const imageUri =
-    props.image && Platform.OS !== "web"
-      ? { uri: props.image }
-      : require("../../../images/WIP.jpg");
+  const imageUri = exercise.image
+    ? isDefaultExercise
+      ? exercise.image
+      : Platform.OS !== "web"
+      ? { uri: exercise.image }
+      : getRandomWorkoutImg()
+    : getRandomWorkoutImg();
 
   // get all equipnment icons
-  const equipmentComponents = getEquipmentIcons(exercises[props.id].equipment);
+  const equipmentComponents = getEquipmentIcons(exercise.equipment);
 
   // Toggle background colour after a long press to select exercise (to create a workout)
   const handleLongPress = (id) => {
@@ -46,10 +61,23 @@ function ExerciseComponent(props) {
 
   const containerStyle = {
     flexDirection: "row",
-    backgroundColor: props.selectedPicker ? "blue" : lightBackgroundColor,
+    backgroundColor:
+      props.hasOwnProperty("selectedExercises") &&
+      props.selectedExercises.includes(props.id)
+        ? defaultColor
+        : lightBackgroundColor,
     padding: 5,
-    margin: 5,
-    height: 100,
+    margin: 10,
+    marginBottom: 0,
+    height: !!(
+      isNextExerciseInWorkout &&
+      !props.exerciseSelectable &&
+      !props.workout &&
+      !selected
+    )
+      ? 100
+      : "auto",
+    borderRadius: 10,
   };
 
   const handlePress = () => {
@@ -65,7 +93,6 @@ function ExerciseComponent(props) {
       style={containerStyle}
       onPress={() => handlePress()}
       onLongPress={() => handleLongPress(props.id)}
-      // onLongPress={() => handleLongPress(props.exercise.id)}
     >
       {
         // order in list for createWorkout
@@ -86,32 +113,87 @@ function ExerciseComponent(props) {
         <Image source={imageUri} style={styles.img} />
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>{exercises[props.id].name}</Text>
-
-        <View style={styles.equipmentContainer}>{equipmentComponents}</View>
+        <Text
+          style={[
+            styles.title,
+            {
+              fontSize: 20,
+              color:
+                props.hasOwnProperty("selectedExercises") &&
+                props.selectedExercises.includes(props.id)
+                  ? "white"
+                  : "black",
+            },
+          ]}
+        >
+          {exercise.name}
+        </Text>
 
         {selected && (
-          <View>
-            <Text style={styles.title}>Exercise Information:</Text>
+          <>
+            <View>
+              {!!exercise.description && (
+                <>
+                  <Text style={styles.title}>Description:</Text>
+                  <Text style={styles.description}>{exercise.description}</Text>
+                </>
+              )}
 
-            <Text>Description:</Text>
-            <Text style={styles.description}>
-              {exercises[props.id].description}
-            </Text>
+              {exercise.time !== -1 && (
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={styles.title}>Time: </Text>
+                  <Text>{formatTime(exercise.time)}</Text>
+                </View>
+              )}
+              {exercise.reps !== -1 && (
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={styles.title}>Reps: </Text>
+                  <Text>{exercise.reps}</Text>
+                </View>
+              )}
 
-            {exercises[props.id].time !== -1 && (
-              <Text>Time: {exercises[props.id].time}</Text>
+              {!!exercise.moreInfo && (
+                <>
+                  <Text style={styles.title}>More Information:</Text>
+                  <Text>{exercise.moreInfo}</Text>
+                </>
+              )}
+              {/* <Text>
+              Drop Sets: {exercise.dropSets ? "Yes" : "No"}
+            </Text> */}
+              {equipmentComponents && equipmentComponents.length !== 0 && (
+                <>
+                  <Text style={styles.title}>Equipment Required:</Text>
+                  <View style={styles.equipmentContainer}>
+                    {equipmentComponents}
+                  </View>
+                </>
+              )}
+            </View>
+            {!!(
+              isNextExerciseInWorkout &&
+              !props.exerciseSelectable &&
+              !props.workout &&
+              !isDefaultExercise
+            ) && (
+              <View>
+                <TouchableOpacity
+                  style={GlobalStyles.optionButton}
+                  onPress={() => editExercise(props.id)}
+                >
+                  <MaterialCommunityIcons name="pencil" size={18} />
+                  <Text style={GlobalStyles.optionButtonText}>Edit</Text>
+                </TouchableOpacity>
+
+                <DeleteExercise
+                  id={props.id}
+                  workout={props.reordable ? true : false}
+                  removeItemFromList={props.removeItemFromList}
+                  currentIndex={props.currentIndex}
+                />
+              </View>
             )}
-            {exercises[props.id].reps !== -1 && (
-              <Text>Reps: {exercises[props.id].reps}</Text>
-            )}
-
-            <Text>More Information:</Text>
-            <Text>{exercises[props.id].moreInfo}</Text>
-            <Text>
-              Drop Sets: {exercises[props.id].dropSets ? "Yes" : "No"}
-            </Text>
-          </View>
+          </>
         )}
 
         {props.workout && (
@@ -124,9 +206,9 @@ function ExerciseComponent(props) {
             >
               <Text>
                 Repetitions: {props.reps} x{" "}
-                {exercises[props.id].time === -1
-                  ? exercises[props.id].reps + " reps"
-                  : formatTime(exercises[props.id].time)}
+                {exercise.time === -1
+                  ? exercise.reps + " reps"
+                  : formatTime(exercise.time)}
               </Text>
             </TouchableOpacity>
 
@@ -175,26 +257,19 @@ function ExerciseComponent(props) {
                   onPress={() =>
                     props.navigation.navigate("PlayExercise", {
                       id: props.id,
+                      name: exercise.name,
+                      defaultExercise: isDefaultExercise,
                     })
                   }
                 />
-              </View>
-              {/* Show delete button when its not displayed in a workout */}
-              {props.workout ? null : (
-                <View style={styles.deleteButtonContainer}>
-                  {!props.reordable && (
-                    <Pressable onPress={() => editExercise(props.id)}>
-                      <MaterialCommunityIcons name="pencil" size={40} />
-                    </Pressable>
-                  )}
-                  <DeleteExercise
-                    id={props.id}
-                    workout={props.reordable ? true : false}
-                    removeItemFromList={props.removeItemFromList}
-                    currentIndex={props.currentIndex}
+                {props.reordable && (
+                  <MaterialCommunityIcons
+                    name="alpha-x-circle-outline"
+                    size={30}
+                    onPress={() => props.removeItemFromList(props.currentIndex)}
                   />
-                </View>
-              )}
+                )}
+              </View>
             </>
           )}
         </>
@@ -214,14 +289,13 @@ const styles = StyleSheet.create({
 
   equipmentContainer: {
     flexDirection: "row",
-    // justifyContent: "space-between",
     alignItems: "center",
+    flexWrap: "wrap",
   },
 
   imgContainer: {
     flexDirection: "row",
-    flex: 3,
-    marginRight: 10,
+    flex: 4,
   },
 
   contentContainer: {
@@ -229,10 +303,11 @@ const styles = StyleSheet.create({
   },
 
   img: {
-    aspectRatio: 3 / 2,
-    width: "100%",
+    aspectRatio: 4 / 3,
+    width: "90%",
     height: undefined,
-    // height: "100%",
+    borderRadius: 10,
+    margin: 3,
   },
 
   playButtonContainer: {

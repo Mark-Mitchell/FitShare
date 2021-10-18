@@ -1,14 +1,19 @@
-// uses Redux to pass back information to EditExercise (because you can't pass back information easily with navigation)
 import React from "react";
-import { View, Text, Pressable } from "react-native";
-
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+} from "react-native";
+import { Div, Image, Text } from "react-native-magnus";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";
 import { fetchEquipmentPicker } from "../../../../redux/actions";
 
 import { equipmentIcons } from "../../../../assets/exercise data/equipment";
+import { lightBackgroundColor } from "../../../../assets/styling/GlobalColors";
 
 function Equipment() {
   // get state from redux
@@ -33,19 +38,58 @@ function Equipment() {
       .replace(/^./, (firstLetter) => firstLetter.toUpperCase())
       .trim();
 
+    const pic = equipmentIcons[item];
+
     return (
-      <Pressable key={item} onPress={() => handleClick(item)}>
-        <Text>{itemName}</Text>
-        <MaterialCommunityIcons
-          name={icons[item]}
-          color={equipment[item] ? "blue" : "black"}
-          size={50}
-        />
+      <Pressable
+        key={item}
+        onPress={() => handleClick(item)}
+        style={{ borderRadius: 10, overflow: "hidden" }}
+      >
+        <View
+          style={{
+            borderRadius: 10,
+            overflow: "hidden",
+            width: Dimensions.get("window").width / 2 - 10,
+            margin: 5,
+            backgroundColor: equipment[item] ? "blue" : lightBackgroundColor,
+          }}
+        >
+          <Image source={pic} h={120} roundedTop="lg" />
+          <Div p={10}>
+            <Text fontWeight="bold" fontSize="xl">
+              {itemName}
+            </Text>
+          </Div>
+        </View>
       </Pressable>
     );
   });
 
-  return <View>{equipmentPressables}</View>;
+  return (
+    <ScrollView>
+      <Text
+        style={{
+          fontSize: 12,
+          fontStyle: "italic",
+          textAlign: "center",
+          margin: 10,
+        }}
+      >
+        Select the equipment required for your exercise by clicking on the tile.
+        Your selection is saved automatically.
+      </Text>
+      <View style={styles.container}>{equipmentPressables}</View>
+    </ScrollView>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+  },
+});
 
 export default Equipment;

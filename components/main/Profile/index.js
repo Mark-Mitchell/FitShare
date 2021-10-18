@@ -1,23 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, Platform, Button, ScrollView } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import * as SecureStore from "expo-secure-store";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import Test from "./Test";
-import Register from "../../auth/Register";
-import Login from "../../auth/Login";
-import { removeAccessToken } from "../../auth/accessToken";
 import { useDispatch } from "react-redux";
 import { fetchLocalData, fetchLocalWorkouts } from "../../../redux/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import checkNetworkConnection from "../../../assets/global functions/checkNetworkConnection";
 
-function Profile() {
+import Test from "./Test";
+import Login from "../../auth/Login";
+import ProfilePage from "./ProfilePage";
+
+import checkNetworkConnection from "../../../assets/global functions/checkNetworkConnection";
+import getUserInfo from "../../auth/getUserInfo";
+import Loading from "../../Loading";
+
+function Profile(props) {
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const [hasConnection, setHasConnection] = useState(undefined);
   const [isdeviceSupported, setIsDeviceSupported] = useState(undefined);
+
+  const [userInfo, setUserInfo] = useState({
+    loggedIn: false,
+    // user: { username: "HARD CODE", email: "DEV" },
+  });
 
   const getNetworkState = async () => {
     const internetReachable = await checkNetworkConnection();
@@ -28,10 +44,6 @@ function Profile() {
     const secureStoreInfo = await SecureStore.isAvailableAsync();
     const isSupported = secureStoreInfo ? true : Platform.OS === "web";
     setIsDeviceSupported(isSupported);
-  };
-
-  const logout = async () => {
-    removeAccessToken();
   };
 
   // check if device has connection and has SecureStoreInfo
@@ -65,43 +77,89 @@ function Profile() {
     }
   };
 
+  const checkIfLoggedIn = async () => {
+    setLoading(true);
+    const apiUserInfo = await getUserInfo();
+    if (!apiUserInfo.loggedIn) {
+      setLoading(false);
+      return props.navigation.navigate("Profile");
+    }
+    setUserInfo(apiUserInfo);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    checkIfLoggedIn();
+  }, []);
+
   return (
     <SafeAreaView>
-      <ScrollView>
-        {isdeviceSupported ? (
-          <>
-            {!hasConnection && (
-              <>
-                <Text style={styles.error}>
-                  ERROR: Please check your connection and try again.
-                </Text>
-              </>
-            )}
+      {!loading ? (
+        <ScrollView>
+          {!!(userInfo.hasOwnProperty("loggedIn") && userInfo.loggedIn) ? (
+            <ProfilePage setUserInfo={setUserInfo} user={userInfo.user} />
+          ) : (
+            <>
+              {isdeviceSupported ? (
+                <>
+                  {!hasConnection && (
+                    <>
+                      <Text style={styles.error}>
+                        ERROR: Please check your connection and try again.
+                      </Text>
+                    </>
+                  )}
 
-            <Text>Connection: {hasConnection ? "yes" : "no"}</Text>
-            <Text>Supported Device: {isdeviceSupported ? "yes" : "no"}</Text>
-            <Test />
-            <Register />
-            <Login />
-            <Button title="Logout" onPress={() => logout()} />
-            <Button
-              title="Delete All Exercises"
-              onPress={() => deleteAll("exercises")}
+                  {!isdeviceSupported && (
+                    <>
+                      <Text style={styles.error}>
+                        ERROR: Your device doesn't seem to be supported to use
+                        the online features. Try to restart your device and
+                        check again. If this persists you can still freely use
+                        the other parts of the app!
+                      </Text>
+                    </>
+                  )}
+
+                  {/* <Test /> */}
+
+                  <Login
+                    navigation={props.navigation}
+                    setUserInfo={setUserInfo}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text style={styles.error}>
+                    Sorry we currently don't support your device to create an
+                    account, however you can keep using our app without an
+                    account!
+                  </Text>
+                </>
+              )}
+            </>
+          )}
+
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("AppInfo", { deleteAll })}
+            style={{
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+              alignSelf: "center",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="information"
+              size={14}
+              style={{ marginRight: 5 }}
             />
-            <Button
-              title="Delete All Workouts"
-              onPress={() => deleteAll("workouts")}
-            />
-          </>
-        ) : (
-          <>
-            <Text style={styles.error}>
-              Sorry we currently don't support your device to create an account,
-              however you can keep using our app without an account!
-            </Text>
-          </>
-        )}
-      </ScrollView>
+            <Text>More information on the app.</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      ) : (
+        <Loading moreInfo="Trying to log you in..." />
+      )}
     </SafeAreaView>
   );
 }

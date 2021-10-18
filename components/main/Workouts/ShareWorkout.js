@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, Button, View, Switch, StyleSheet } from "react-native";
+import { Text, View, Switch, StyleSheet, TouchableOpacity } from "react-native";
 
 import { fetchLocalWorkouts } from "../../../redux/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,8 +10,11 @@ import getUserInfo from "../../auth/getUserInfo";
 import { apiURL } from "../../../assets/config/api.config";
 import { getAccessToken } from "../../auth/accessToken";
 import checkNetworkConnection from "../../../assets/global functions/checkNetworkConnection";
+import Loading from "../../Loading";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
 
 function ShareWorkout(props) {
+  const [loading, setLoading] = useState(false);
   const workout = props.route.params.workout;
   const id = workout.generalInfo.id;
 
@@ -32,14 +35,17 @@ function ShareWorkout(props) {
   const [isConnected, setIsConnected] = useState(null);
 
   const checkIfLoggedIn = async () => {
+    setLoading(true);
     const apiUserInfo = await getUserInfo();
     if (apiUserInfo.loggedIn) {
       console.log(apiUserInfo.success);
     } else {
       console.log(apiUserInfo.error);
+      setLoading(false);
       return props.navigation.navigate("Profile");
     }
     setUserInfo(apiUserInfo);
+    setLoading(false);
   };
 
   const checkInternet = async () => {
@@ -77,6 +83,7 @@ function ShareWorkout(props) {
     }
 
     if (idShare && userInfo.loggedIn) {
+      setLoading(true);
       const token = await getAccessToken();
 
       try {
@@ -97,21 +104,27 @@ function ShareWorkout(props) {
         if (json.message.includes("NoWorkout")) {
           setError("Please provide an ID to download a workout.");
         } else if (json.message.includes("NoUserId")) {
+          setLoading(false);
           return setError(
             "Please check your connection, restart your app and try again."
           );
         } else if (json.message.includes("ERROR")) {
+          setLoading(false);
           return setError(json.message);
         } else if (json.message.includes("SUCCESS")) {
           saveWorkout(json.slug, json.creator, json.creatorUsername);
           setSuccess("You have successfully saved the workout.");
+          setLoading(false);
           return props.navigation.popToTop();
         } else {
+          setLoading(false);
           return setError(
             "An unexpected error has occured. Please check your connection, restart the app and try again."
           );
         }
+        setLoading(false);
       } catch (err) {
+        setLoading(false);
         console.log(err);
       }
     } else if (userInfo.loggedIn && isOnline) {
@@ -122,6 +135,7 @@ function ShareWorkout(props) {
         return console.log("DO NOTHING, NOT SHARED");
 
       // Delete the workout from the db
+      setLoading(true);
       const token = await getAccessToken();
 
       try {
@@ -142,6 +156,7 @@ function ShareWorkout(props) {
         if (json.message.includes("NoSlug")) {
           setError("Please provide an slug to delete the workout.");
         } else if (json.message.includes("NoUserId")) {
+          setLoading(false);
           return setError(
             "Please check your connection, restart your app and try again."
           );
@@ -150,22 +165,28 @@ function ShareWorkout(props) {
           setError(
             "Please check your connection, restart your app and try again."
           );
+          setLoading(false);
           return props.navigation.popToTop();
         } else if (json.message.includes("ERROR")) {
+          setLoading(false);
           return setError(json.message);
         } else if (json.message.includes("SUCCESS")) {
           saveWorkout(json.slug, json.creator);
           saveWorkout();
           setSuccess("You have successfully deleted the workout.");
+          setLoading(false);
           return props.navigation.popToTop();
         } else {
+          setLoading(false);
           return setError(
             "An unexpected error has occured. Please check your connection, restart your device and try again."
           );
         }
       } catch (err) {
+        setLoading(false);
         console.log(err);
       }
+      setLoading(false);
     }
   };
 
@@ -196,47 +217,62 @@ function ShareWorkout(props) {
 
   return (
     <>
-      {!isConnected ? (
+      {!loading ? (
         <>
-          <Text>Please connect to the intenet.</Text>
-        </>
-      ) : (
-        <>
-          {userInfo.hasOwnProperty("error") && userInfo.error && (
-            <Text>{userInfo.error}</Text>
-          )}
-          {!!error && <Text>{error}</Text>}
-
-          {userInfo.hasOwnProperty("success") && userInfo.success && (
-            <Text>{userInfo.success}</Text>
-          )}
-          {!!(success || error) && <Text>{success}</Text>}
-
-          {!success && (
+          {!isConnected ? (
             <>
-              <Text>Share Workout Page</Text>
-              {userInfo.hasOwnProperty("loggedIn") && userInfo.loggedIn && (
+              <Text style={GlobalStyles.errorText}>
+                Please connect to the intenet.
+              </Text>
+            </>
+          ) : (
+            <>
+              {userInfo.hasOwnProperty("error") && userInfo.error && (
+                <Text style={GlobalStyles.errorText}>{userInfo.error}</Text>
+              )}
+              {!!error && <Text style={GlobalStyles.errorText}>{error}</Text>}
+
+              {userInfo.hasOwnProperty("success") && userInfo.success && (
+                <Text style={GlobalStyles.successText}>{userInfo.success}</Text>
+              )}
+              {!!(success || error) && (
+                <Text style={GlobalStyles.successText}>{success}</Text>
+              )}
+
+              {!success && (
                 <>
-                  <View style={styles.switch}>
-                    <Text>Share this Workout by ID</Text>
-                    <Switch
-                      trackColor={{ false: "#767577", true: "#81b0ff" }}
-                      thumbColor={idShare ? "#f5dd4b" : "#f4f3f4"}
-                      ios_backgroundColor="#3e3e3e"
-                      onValueChange={() =>
-                        setIdShare((prevState) => !prevState)
-                      }
-                      value={idShare}
-                      style={{ marginLeft: 10, marginRight: 10 }}
-                    />
-                    {/* <Text>Create Workout</Text> */}
-                  </View>
-                  <Button title="Save" onPress={() => handleSave()} />
+                  {userInfo.hasOwnProperty("loggedIn") && userInfo.loggedIn && (
+                    <>
+                      <View style={styles.switch}>
+                        <Text>Share this Workout by ID</Text>
+                        <Switch
+                          trackColor={{ false: "#767577", true: "#81b0ff" }}
+                          thumbColor={idShare ? "#f5dd4b" : "#f4f3f4"}
+                          ios_backgroundColor="#3e3e3e"
+                          onValueChange={() =>
+                            setIdShare((prevState) => !prevState)
+                          }
+                          value={idShare}
+                          style={{ marginLeft: 10, marginRight: 10 }}
+                        />
+                      </View>
+                      <TouchableOpacity
+                        style={GlobalStyles.defaultButton}
+                        onPress={() => handleSave()}
+                      >
+                        <Text style={GlobalStyles.defaultButtonText}>
+                          Save Selection
+                        </Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
                 </>
               )}
             </>
           )}
         </>
+      ) : (
+        <Loading />
       )}
     </>
   );

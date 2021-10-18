@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Platform, Pressable } from "react-native";
+import { Platform, Pressable, Text, TouchableOpacity } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
@@ -9,6 +9,7 @@ import { fetchLocalData } from "../../../redux/actions";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import DeleteConformation from "../../../assets/global functions/DeleteConformation";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
 
 function DeleteExercise(props) {
   // Delete Exercise (Exercises) or remove Exercise from Workout (EditWorkout)
@@ -61,14 +62,21 @@ function DeleteExercise(props) {
         title="Delete Exercise?"
         body="Do you really want to delete this Exercise?"
       />
-      <Pressable>
+      {/* <Pressable>
         <MaterialCommunityIcons
           name="close"
           color="black"
           size={20}
           onPress={handleDeleteExercise}
         />
-      </Pressable>
+      </Pressable> */}
+      <TouchableOpacity
+        style={GlobalStyles.optionButton}
+        onPress={handleDeleteExercise}
+      >
+        <MaterialCommunityIcons name="delete" size={18} />
+        <Text style={GlobalStyles.optionButtonText}>Delete</Text>
+      </TouchableOpacity>
     </>
   );
 }

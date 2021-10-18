@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 // Navigation
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -12,13 +12,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { fetchLocalData, fetchLocalWorkouts } from "../redux/actions";
+import {
+  fetchDefaultExercises,
+  fetchLocalData,
+  fetchLocalWorkouts,
+} from "../redux/actions";
 
 // Mainpages Components
 import Workouts from "./main/Workouts";
 import Exercises from "./main/Exercises";
 import Create from "./main/Create";
 import Profile from "./main/Profile";
+import {
+  defaultColor,
+  defaultLightColor,
+} from "../assets/styling/GlobalColors";
+import defaultLocalExercises from "../assets/exercise data/defaultExercises";
+import WelcomePage from "./WelcomePage";
 
 function Main() {
   // Get Local Data from AsyncStorage and load it to global state (redux)
@@ -40,65 +50,85 @@ function Main() {
     getLocalData("workouts").then((workouts) =>
       dispatch(fetchLocalWorkouts(workouts))
     );
+
+    dispatch(fetchDefaultExercises(defaultLocalExercises));
   }, []);
 
+  const [firstLoad, setFirstLoad] = useState(true);
+  const getStarted = () => {
+    setFirstLoad(false);
+  };
+
   return (
-    <Tab.Navigator
-      initialRouteName="Workouts"
-      tabBarOptions={{
-        style: { color: "red" },
-        activeTintColor: "purple",
-        inactiveBackgroundColor: "black",
-        activeBackgroundColor: "black",
-        inactiveTintColor: "white",
-        showLabel: false,
-      }}
-    >
-      <Tab.Screen
-        name="Workouts"
-        component={Workouts}
-        options={{
-          tabBarLabel: "Workouts",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="weight-lifter"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Exercises"
-        component={Exercises}
-        options={{
-          tabBarLabel: "Exercises",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="dumbbell" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Create"
-        component={Create}
-        options={{
-          tabBarLabel: "Create",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="plus" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          tabBarLabel: "Profile",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" color={color} size={size} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+    <>
+      {!firstLoad ? (
+        <Tab.Navigator
+          initialRouteName="Workouts"
+          tabBarOptions={{
+            activeTintColor: defaultLightColor,
+            inactiveBackgroundColor: "black",
+            activeBackgroundColor: "black",
+            inactiveTintColor: "white",
+            showLabel: false,
+          }}
+        >
+          <Tab.Screen
+            name="Workouts"
+            component={Workouts}
+            options={{
+              tabBarLabel: "Workouts",
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons
+                  name="weight-lifter"
+                  color={color}
+                  size={size}
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Exercises"
+            component={Exercises}
+            options={{
+              tabBarLabel: "Exercises",
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons
+                  name="dumbbell"
+                  color={color}
+                  size={size}
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Create"
+            component={Create}
+            options={{
+              tabBarLabel: "Create",
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="plus" color={color} size={size} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={Profile}
+            options={{
+              tabBarLabel: "Profile",
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons
+                  name="account"
+                  color={color}
+                  size={size}
+                />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      ) : (
+        <WelcomePage getStarted={getStarted} />
+      )}
+    </>
   );
 }
 

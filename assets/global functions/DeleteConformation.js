@@ -14,8 +14,8 @@ function DeleteConformation(props) {
 
   const content = (
     <View style={GlobalStyles.modalContent}>
-      <Text>{props.title}</Text>
-      <Text>{props.body}</Text>
+      <Text style={GlobalStyles.modalTextTitle}>{props.title}</Text>
+      <Text style={GlobalStyles.modalTextBody}>{props.body}</Text>
 
       <View style={GlobalStyles.modalButtonContainer}>
         <TouchableOpacity

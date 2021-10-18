@@ -5,6 +5,7 @@ import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
 import generateId from "../../../assets/global functions/generateId";
+import { getRandomWorkoutImg } from "../../../assets/global functions/getRandomWorkoutImg";
 
 import formatTime from "../../../assets/styling/formatTime";
 import { lightBackgroundColor } from "../../../assets/styling/GlobalColors";
@@ -13,7 +14,10 @@ import calculateWorkoutTime from "./calculateWorkoutTime";
 
 function WorkoutComponent(props) {
   const exercises = useSelector((state) => state.exercises);
+  const defaultExercises = useSelector((state) => state.defaultExercises);
   const reduxWorkouts = useSelector((state) => state.workouts);
+
+  const image = getRandomWorkoutImg();
 
   const dispatch = useDispatch();
 
@@ -51,15 +55,13 @@ function WorkoutComponent(props) {
           onPress={() =>
             props.navigation.navigate("WorkoutPage", {
               workout: props.workout,
+              name: props.workout.generalInfo.title,
             })
           }
           style={styles.container}
         >
           <View style={styles.content}>
-            <Image
-              source={require("../../../images/WIP.jpg")}
-              style={styles.image}
-            />
+            <Image source={image} style={styles.image} />
             <View styles={styles.info}>
               <Text style={styles.title}>Name:</Text>
               <Text>
@@ -73,8 +75,26 @@ function WorkoutComponent(props) {
               </Text>
               <Text style={styles.title}>Estimated Time:</Text>
               <Text>
-                {formatTime(calculateWorkoutTime(props.workout, exercises))}
+                {formatTime(
+                  calculateWorkoutTime(
+                    props.workout,
+                    exercises,
+                    defaultExercises
+                  )
+                )}
               </Text>
+              {!!(
+                props.workout.hasOwnProperty("generalInfo") &&
+                props.workout.generalInfo.hasOwnProperty("slug") &&
+                props.workout.generalInfo.slug
+              ) && (
+                <>
+                  <Text style={{ fontSize: 12, fontStyle: "italic" }}>
+                    Online Workout (ID): {props.workout.generalInfo.slug} -
+                    Creator: {props.workout.generalInfo.creatorUsername}
+                  </Text>
+                </>
+              )}
             </View>
           </View>
           {props.hasOwnProperty("onlineWorkout") && props.onlineWorkout && (
@@ -83,20 +103,6 @@ function WorkoutComponent(props) {
               size={30}
               onPress={() => downloadOnlineWorkout()}
             />
-          )}
-          {!!(
-            props.workout.hasOwnProperty("generalInfo") &&
-            props.workout.generalInfo.hasOwnProperty("slug") &&
-            props.workout.generalInfo.slug
-          ) && (
-            <>
-              <Text>ID: </Text>
-              <Text>{props.workout.generalInfo.slug}</Text>
-              <Text>Creator:</Text>
-              <Text>{props.workout.generalInfo.creator}</Text>
-              <Text>Username:</Text>
-              <Text>{props.workout.generalInfo.creatorUsername}</Text>
-            </>
           )}
         </Pressable>
       )}
@@ -108,6 +114,8 @@ const styles = StyleSheet.create({
   image: {
     height: "auto",
     width: "35%",
+    borderRadius: 10,
+    marginRight: 15,
   },
   content: {
     flexDirection: "row",
@@ -119,6 +127,9 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     backgroundColor: lightBackgroundColor,
+    borderRadius: 10,
+    margin: 10,
+    marginBottom: 0,
   },
   title: {
     fontWeight: "bold",

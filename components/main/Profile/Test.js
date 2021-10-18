@@ -65,6 +65,7 @@ function Test() {
         }),
       });
       let json = await response.json();
+      console.log(json);
       return saveAccessToken(json.accessToken);
     } catch (err) {
       console.log(err);
@@ -84,7 +85,7 @@ function Test() {
         },
       });
       const json = await response.json();
-
+      console.log(json);
       if (json.message.includes("TokenExpiredError")) {
         return console.log("LOGIN AGAIN; TOKEN EXPIRED");
       } else {
@@ -137,6 +138,11 @@ function Test() {
         onPress={async () => console.log(await getUserInfo())}
       />
       <Button title="Upload Unlisted Workout" onPress={() => uploadWorkout()} />
+      <Button
+        title="Get Token from local"
+        onPress={() => getAccessToken().then((res) => console.log(res))}
+      />
+      <Button title="Set Local token" onPress={() => saveAccessToken("test")} />
     </>
   );
 }

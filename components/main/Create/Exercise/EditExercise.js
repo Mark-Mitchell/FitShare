@@ -1,14 +1,14 @@
 // Warning on Web, broken with new version of react native web, but works
 import React, { useState, useEffect } from "react";
 import {
-  Button,
-  TextInput,
   View,
   StyleSheet,
   Platform,
   ScrollView,
   Switch,
   Text,
+  TouchableOpacity,
+  Image,
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,11 +22,14 @@ import {
 import ImagePicker from "./ImagePicker";
 import * as FileSystem from "expo-file-system";
 
-import DropSets from "./DropSets";
-import PickerComponent from "./PickerComponent";
-
 import { defaultEquipment } from "../../../../assets/exercise data/equipment";
 import generateId from "../../../../assets/global functions/generateId";
+import GlobalStyles from "../../../../assets/styling/GlobalStyles";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Input } from "react-native-magnus";
+import PickerModal from "./PickerModal";
+import formatTime from "../../../../assets/styling/formatTime";
+import { StorageAccessFramework } from "expo-file-system";
 
 function EditExercise(props) {
   const localExercises = useSelector((state) => state.exercises);
@@ -49,6 +52,9 @@ function EditExercise(props) {
         dropSetInfo: {},
       };
   const [state, setState] = useState(initialState);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [error, setError] = useState("");
 
   // Timed exercise or Reps based
   const [isTimedExercise, setIsTimeExercise] = useState(
@@ -88,32 +94,34 @@ function EditExercise(props) {
   const dispatch = useDispatch();
 
   const submitForm = async () => {
+    if (!state.name) return setError("Please set a title for your exercise.");
+
     try {
       const id = isEditing ? state.id : generateId(localExercises);
-
+      let image = "";
       // Save Image locally
       if (Platform.OS !== "web" && state.image) {
         try {
+          const initialInfo = await FileSystem.getInfoAsync(state.image);
+          // console.log(initialInfo.uri);
           await FileSystem.copyAsync({
             from: state.image,
-            to: FileSystem.documentDirectory + "images/" + id,
+            to: FileSystem.documentDirectory + "exercise-" + id + ".png",
           });
+          const getInfo = await FileSystem.getInfoAsync(
+            FileSystem.documentDirectory + "exercise-" + id + ".png"
+          );
+          image = getInfo ? getInfo.uri : "";
         } catch (error) {
           console.log(error);
         }
       }
-
-      const image =
-        Platform.OS !== "web" && state.image
-          ? FileSystem.documentDirectory + "images/" + id
-          : "";
-
       // Add to Local Storage
       const newExercise = {
         [id]: {
           ...state,
           id,
-          image,
+          image: image,
         },
       };
 
@@ -139,35 +147,27 @@ function EditExercise(props) {
   };
 
   return (
-    <ScrollView
-    // contentContainerStyle={{ flexGrow: 1 }}
-    // keyboardShouldPersistTaps="handled"
-    >
+    <ScrollView>
       <View>
+        {!!error && <Text style={GlobalStyles.errorText}>{error}</Text>}
         <View style={styles.container}>
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
+          <Input
+            prefix={<Text>Title: </Text>}
+            style={GlobalStyles.defaultInput}
             onChangeText={(value) => handleInput("name", value)}
             value={state.name}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Description"
+          <Input
+            prefix={<Text>Description: </Text>}
+            placeholder="(optional)"
+            style={GlobalStyles.defaultInput}
             onChangeText={(value) => handleInput("description", value)}
             value={state.description}
             multiline={true}
           />
 
-          <Button
-            onPress={() =>
-              props.navigation.navigate("EquipmentPicker", { state })
-            }
-            title="Equipment Picker"
-          />
-
           <View style={styles.isTimedExerciseContainer}>
-            <Text>Reps </Text>
+            <Text>Repetitions </Text>
             <Switch
               trackColor={{ false: "#767577", true: "#81b0ff" }}
               thumbColor={isTimedExercise ? "#f5dd4b" : "#f4f3f4"}
@@ -175,39 +175,58 @@ function EditExercise(props) {
               onValueChange={() => setIsTimeExercise((prevState) => !prevState)}
               value={isTimedExercise}
             />
-            <Text> Time</Text>
+            <Text> Duration</Text>
           </View>
 
-          {state.time !== -1 && (
-            <PickerComponent
-              handleInput={handleInput}
-              type="time"
-              startTime={isEditing ? state.time : null}
-            />
-          )}
+          {/* Modal for Time / Reps Picker */}
+          <PickerModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            isTimedExercise={state.time !== -1}
+            handleInput={handleInput}
+            isEditing={isEditing}
+            state={state}
+          />
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={GlobalStyles.optionButton}
+          >
+            <Text>
+              {state.time !== -1
+                ? "Duration: " + formatTime(state.time)
+                : "Repetitions: " + state.reps}
+            </Text>
+          </TouchableOpacity>
 
-          {state.reps !== -1 && (
-            <PickerComponent
-              type="reps"
-              reps={state.reps}
-              handleInput={handleInput}
-            />
-          )}
-          <TextInput
-            style={styles.input}
-            placeholder="More Info"
+          <Input
+            prefix={<Text>More info: </Text>}
+            placeholder="(optional)"
+            style={GlobalStyles.defaultInput}
             onChangeText={(value) => handleInput("moreInfo", value)}
             value={state.moreInfo}
             multiline={true}
           />
         </View>
-        {Platform.OS !== "web" && (
+
+        {/* Option Buttons */}
+        <View style={GlobalStyles.optionButtonContainer}>
           <ImagePicker
             setImage={(val) => handleInput("image", val)}
             imgURI={state.image}
           />
-        )}
 
+          <TouchableOpacity
+            onPress={() =>
+              props.navigation.navigate("EquipmentPicker", { state })
+            }
+            style={GlobalStyles.optionButton}
+          >
+            <MaterialCommunityIcons name="dumbbell" size={15} />
+            <Text style={GlobalStyles.optionButtonText}>Equipment</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 
         <Button
           style={styles.halfButton}
           onPress={() => handleInput("dropSets", !state.dropSets)}
@@ -218,11 +237,14 @@ function EditExercise(props) {
           setState={setState}
           generateId={generateId}
           styles={styles}
-        />
+        /> */}
 
-        <View style={styles.buttonContainer}>
-          <Button onPress={() => submitForm()} title="Save Exercise" />
-        </View>
+        <TouchableOpacity
+          style={GlobalStyles.defaultButton}
+          onPress={() => submitForm()}
+        >
+          <Text style={GlobalStyles.defaultButtonText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

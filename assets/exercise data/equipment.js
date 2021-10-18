@@ -1,20 +1,17 @@
-// List of all selectable equipment and their respective community icon
 export const defaultEquipment = {
   weights: false,
   balanceBoard: false,
   band: false,
-  medicinBall: false,
+  medicineBall: false,
   gymnasticBall: false,
-  stepper: false,
-  yogaMat: false,
+  pullupBar: false,
 };
 
 export const equipmentIcons = {
-  weights: "weight-lifter",
-  balanceBoard: "skateboard",
-  band: "yoga",
-  medicinBall: "volleyball",
-  gymnasticBall: "volleyball",
-  stepper: "stairs",
-  yogaMat: "yoga",
+  weights: require("../../images/equipment/weights.jpg"),
+  balanceBoard: require("../../images/equipment/balance-board.jpg"),
+  band: require("../../images/equipment/elastic-bands.jpg"),
+  medicineBall: require("../../images/equipment/medicine-ball.jpg"),
+  gymnasticBall: require("../../images/equipment/gymnastic-ball.jpg"),
+  pullupBar: require("../../images/equipment/pullupbar.jpg"),
 };

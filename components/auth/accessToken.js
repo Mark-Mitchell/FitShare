@@ -4,8 +4,6 @@ export const saveAccessToken = async (token) => {
   const hasSecureStore = await SecureStore.isAvailableAsync();
   // if SecureStore is available use it, otherwise save it in Window.sessionStorage (for the web)
   if (hasSecureStore) {
-    console.log(typeof token);
-    return console.log(token);
     await SecureStore.setItemAsync("accessToken", token);
 
     // check if token is saved and acessible

@@ -1,6 +1,6 @@
 // Gives Error on web, but works
 import React, { useEffect, useState } from "react";
-import { Animated } from "react-native";
+import { Animated, View } from "react-native";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import formatTime from "../../assets/styling/formatTime";
 
@@ -20,22 +20,31 @@ function Timer(props) {
   const onComplete = props.onComplete ? props.onComplete : () => [false];
 
   return (
-    <CountdownCircleTimer
-      isPlaying={props.playing}
-      duration={duration}
-      colors={[
-        ["#A30000", 0.4],
-        ["#004777", 0.4],
-        ["#0b8717", 0.2],
-      ]}
-      onComplete={() => onComplete()}
+    <View
+      style={{
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        alignContent: "center",
+      }}
     >
-      {({ remainingTime, animatedColor }) => (
-        <Animated.Text style={{ color: animatedColor, fontSize: 40 }}>
-          {formatTime(remainingTime)}
-        </Animated.Text>
-      )}
-    </CountdownCircleTimer>
+      <CountdownCircleTimer
+        isPlaying={props.playing}
+        duration={duration}
+        colors={[
+          ["#A30000", 0.4],
+          ["#004777", 0.4],
+          ["#0b8717", 0.2],
+        ]}
+        onComplete={() => onComplete()}
+      >
+        {({ remainingTime, animatedColor }) => (
+          <Animated.Text style={{ color: animatedColor, fontSize: 25 }}>
+            {formatTime(remainingTime)}
+          </Animated.Text>
+        )}
+      </CountdownCircleTimer>
+    </View>
   );
 }
 

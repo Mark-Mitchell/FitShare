@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { View, Button, StyleSheet, Dimensions, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalWorkouts } from "../../../../redux/actions";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import WorkoutPage from "../../Workouts/WorkoutPage";
 import Form from "./Form";
 import ReordableList from "./ReordableList";
 
 import generateId from "../../../../assets/global functions/generateId";
+import {
+  defaultColor,
+  defaultLightColor,
+} from "../../../../assets/styling/GlobalColors";
+import GlobalStyles from "../../../../assets/styling/GlobalStyles";
 
 function EditWorkout(props) {
   const isEditing = props.hasOwnProperty("route");
@@ -42,6 +55,8 @@ function EditWorkout(props) {
   );
   const [workout, setWorkout] = useState(initialWorkoutState);
 
+  const [error, setError] = useState("");
+
   // Generate the workout in the background after every change
   useEffect(() => {
     setWorkout((prevState) => {
@@ -64,13 +79,16 @@ function EditWorkout(props) {
             : null
           : null;
 
-        if (exercises[selectedExercises[i]].name) {
+        if (
+          selectedExercises[i].includes("d") ||
+          exercises[selectedExercises[i]].name
+        ) {
           newExerciseState = {
             ...newExerciseState,
             [i]: {
-              // info: exercises[selectedExercises[i]],
               info: {
-                id: exercises[selectedExercises[i]].id,
+                id: selectedExercises[i],
+                // id: exercises[selectedExercises[i]].id,
               },
               position: i + 1,
               timeBetweenExercises,
@@ -93,6 +111,13 @@ function EditWorkout(props) {
   const reduxWorkouts = useSelector((state) => state.workouts);
 
   const saveWorkout = async () => {
+    if (!workout.generalInfo.title)
+      return setError("Please enter a title in step 2.");
+    if (Object.keys(workout.exercises).length < 1)
+      return setError(
+        "Please add at least one exercise to the workout in step 1."
+      );
+
     // save to redux
     const id = isEditing
       ? props.route.params.workout.generalInfo.id
@@ -130,61 +155,99 @@ function EditWorkout(props) {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        {/* Step One (Chosing the exercises and their order) */}
-        {step === 1 && (
-          <>
-            <Button
-              title="Add Exercise"
-              onPress={() => props.navigation.navigate("ExercisePicker")}
-            />
-            <ReordableList
-              navigation={props.navigation}
-              setSelectedExercises={setSelectedExercises}
-              selectedExercises={selectedExercises}
-            />
-          </>
-        )}
-        {/* Step Two (General Info & Default rest times) */}
-        {step === 2 && (
-          <>
-            <Form setWorkout={setWorkout} workout={workout} />
-          </>
-        )}
-        {/* Step Three (Modify default rest times and save) */}
-        {step === 3 && (
-          <>
-            <WorkoutPage
-              selectedExercises={selectedExercises}
-              navigation={props.navigation}
-              workout={workout}
-              setWorkout={setWorkout}
-            />
-            <Button title="Save Workout" onPress={() => saveWorkout()} />
-          </>
-        )}
-        {/* Step Controls (always shown on the bottom) */}
+    <SafeAreaView style={{ height: "100%", paddingBottom: 75 }}>
+      <ScrollView
+        style={{
+          height: "100%",
+        }}
+      >
+        {!!error && <Text style={GlobalStyles.errorText}>{error}</Text>}
+        <Text
+          style={{ fontSize: 12, fontStyle: "italic", textAlign: "center" }}
+        >
+          Complete all three steps to create your workout!
+        </Text>
+
+        {/* Step Controls (always shown on the top) */}
         <View style={styles.stepControl}>
-          <Button title="Step 1" onPress={() => setStep(1)} />
-          <Button title="Step 2" onPress={() => setStep(2)} />
-          <Button title="Step 3" onPress={() => setStep(3)} />
+          <MaterialCommunityIcons
+            name="circle"
+            size={25}
+            color={step === 1 ? defaultLightColor : defaultColor}
+            onPress={() => setStep(1)}
+            style={{ margin: 5 }}
+          />
+          <MaterialCommunityIcons
+            name="circle"
+            size={25}
+            color={step === 2 ? defaultLightColor : defaultColor}
+            onPress={() => setStep(2)}
+            style={{ margin: 5 }}
+          />
+          <MaterialCommunityIcons
+            name="circle"
+            size={25}
+            color={step === 3 ? defaultLightColor : defaultColor}
+            onPress={() => setStep(3)}
+            style={{ margin: 5 }}
+          />
         </View>
-      </View>
-    </ScrollView>
+        <View style={styles.container}>
+          {/* Step One (Chosing the exercises and their order) */}
+          {step === 1 && (
+            <View style={{ paddingBottom: 75 }}>
+              <TouchableOpacity
+                style={[GlobalStyles.optionButton, { width: "90%" }]}
+                onPress={() => props.navigation.navigate("ExercisePicker")}
+              >
+                <MaterialCommunityIcons name="plus" size={15} />
+                <Text style={GlobalStyles.optionButtonText}>Exercise</Text>
+              </TouchableOpacity>
+              <ReordableList
+                navigation={props.navigation}
+                setSelectedExercises={setSelectedExercises}
+                selectedExercises={selectedExercises}
+              />
+            </View>
+          )}
+          {/* Step Two (General Info & Default rest times) */}
+          {step === 2 && (
+            <>
+              <Form setWorkout={setWorkout} workout={workout} />
+            </>
+          )}
+          {/* Step Three (Modify default rest times and save) */}
+          {step === 3 && (
+            <>
+              <TouchableOpacity
+                style={GlobalStyles.defaultButton}
+                onPress={() => saveWorkout()}
+              >
+                <Text style={GlobalStyles.defaultButtonText}>Save</Text>
+              </TouchableOpacity>
+              <WorkoutPage
+                selectedExercises={selectedExercises}
+                navigation={props.navigation}
+                workout={workout}
+                setWorkout={setWorkout}
+              />
+            </>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    height: Dimensions.get("window").height - 100,
+    flex: 1,
   },
   stepControl: {
-    flex: 1,
-    flexDirection: "column",
-    // alignSelf: "flex-end",
-    justifyContent: "flex-end",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
+    flexDirection: "row",
   },
 });
 

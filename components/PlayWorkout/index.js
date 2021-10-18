@@ -82,6 +82,8 @@ function PlayWorkout(props) {
       // If exercise finished:
       setBreakType("TimeBetweenSets");
       setCurrentSet((prevState) => prevState + 1);
+      console.log("SET TO Go");
+      setComingExercise(idArray[currentIndex]);
     } else {
       const { timeBetweenExercises } = exercises[currentIndex];
       breakTime =
@@ -91,10 +93,10 @@ function PlayWorkout(props) {
 
       setBreakType("TimeBetweenExercises");
       setCurrentSet((prevState) => prevState + 1);
+      setComingExercise(
+        currentIndex + 1 >= idArray.length ? null : idArray[currentIndex + 1]
+      );
     }
-    setComingExercise(
-      currentIndex + 1 >= idArray.length ? null : idArray[currentIndex + 1]
-    );
     setCurrentBreakTime(breakTime);
     setIsBreakActive(true);
   };
@@ -117,6 +119,8 @@ function PlayWorkout(props) {
           time={currentBreakTime}
           comingExercise={comingExercise}
           handleNextExercise={handleNextExercise}
+          currentSetInfo={`${currentSet}/${sets}`}
+          currentExerciseInfo={`${currentIndex + 1}/${idArray.length}`}
         />
       ) : (
         <PlayExercise
@@ -125,6 +129,8 @@ function PlayWorkout(props) {
           nextExercise={nextBreak}
           previousExercise={previousExercise}
           minReached={minReached}
+          currentSetInfo={`${currentSet}/${sets}`}
+          currentExerciseInfo={`${currentIndex + 1}/${idArray.length}`}
         />
       )}
       <Text>

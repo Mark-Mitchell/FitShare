@@ -1,8 +1,6 @@
 // Can't use @react-native-picker/picker with expo managed build, so currently uses deprecated but working Picker from react-native
-// import { Picker } from "@react-native-picker/picker";
-
 import React, { useState } from "react";
-import { View, Picker } from "react-native";
+import { View, Picker, Text } from "react-native";
 import formatTime from "../../../../assets/styling/formatTime";
 
 function TimePickerComponent(props) {
@@ -48,22 +46,51 @@ function TimePickerComponent(props) {
     <View>
       {/* Time Input */}
       {props.type === "time" && (
-        <View>
-          <Picker
-            mode={"dropdown"}
-            selectedValue={minutes}
-            onValueChange={(itemValue) => handleTimeInput("minutes", itemValue)}
+        <>
+          <View
+            style={{
+              flexDirection: "row",
+              borderTopWidth: 1,
+              padding: 5,
+              margin: 5,
+            }}
           >
-            {pickerItems(60)}
-          </Picker>
+            <View style={{ width: "50%", alignItems: "center" }}>
+              <Text style={{ textAlign: "center", fontWeight: "bold" }}>
+                minutes
+              </Text>
+            </View>
+            <View
+              style={{ width: "50%", alignItems: "center", borderLeftWidth: 1 }}
+            >
+              <Text style={{ textAlign: "center", fontWeight: "bold" }}>
+                seconds
+              </Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Picker
+              mode={"dropdown"}
+              selectedValue={minutes}
+              onValueChange={(itemValue) =>
+                handleTimeInput("minutes", itemValue)
+              }
+              style={{ width: "49%" }}
+            >
+              {pickerItems(60)}
+            </Picker>
 
-          <Picker
-            selectedValue={seconds}
-            onValueChange={(itemValue) => handleTimeInput("seconds", itemValue)}
-          >
-            {pickerItems(59)}
-          </Picker>
-        </View>
+            <Picker
+              selectedValue={seconds}
+              onValueChange={(itemValue) =>
+                handleTimeInput("seconds", itemValue)
+              }
+              style={{ width: "49%" }}
+            >
+              {pickerItems(59)}
+            </Picker>
+          </View>
+        </>
       )}
 
       {/* Reps Input */}

@@ -1,9 +1,16 @@
-const calculateWorkoutTime = (workout, reduxExercises) => {
+const calculateWorkoutTime = (
+  workout,
+  reduxExercises,
+  reduxDefaultExercises = {}
+) => {
   const exercisesObject = workout.exercises;
   let totalTime = 0;
   for (let i = 0; i < Object.keys(exercisesObject).length; i++) {
     const id = exercisesObject[i].info.id;
-    const exercise = reduxExercises[id];
+    const isDefaultExercise = JSON.stringify(id).includes("d");
+    const exercise = isDefaultExercise
+      ? reduxDefaultExercises[id]
+      : reduxExercises[id];
     const isTimedExercise = exercise.time !== -1;
 
     const workoutReps = exercisesObject[i].reps ? exercisesObject[i].reps : 1;

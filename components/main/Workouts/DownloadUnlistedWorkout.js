@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { TextInput, Button, Text } from "react-native";
+import { Text, TouchableOpacity, Button } from "react-native";
+import { Input } from "react-native-magnus";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { apiURL } from "../../../assets/config/api.config";
 import { getAccessToken } from "../../auth/accessToken";
 import getUserInfo from "../../auth/getUserInfo";
 
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
 import WorkoutComponent from "./WorkoutComponent";
+import Loading from "../../Loading";
 
 function DownloadUnlistedWorkout(props) {
+  const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({
     userInfo: undefined,
-    loggedIn: false,
+    loggedIn: true,
   });
 
   const [slug, setSlug] = useState("");
@@ -18,12 +24,13 @@ function DownloadUnlistedWorkout(props) {
   const [workout, setWorkout] = useState(null);
 
   const checkIfLoggedIn = async () => {
+    setLoading(true);
     const apiUserInfo = await getUserInfo();
-
     if (!apiUserInfo.loggedIn) {
       return props.navigation.navigate("Profile");
     }
     setUserInfo(apiUserInfo);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -85,21 +92,39 @@ function DownloadUnlistedWorkout(props) {
 
   return (
     <>
-      {!!error && <Text>{error}</Text>}
-      <TextInput
-        placeholder="Workout ID"
-        value={slug}
-        onChangeText={(text) => setSlug(text)}
-      />
-      <Button title="Search & Download" onPress={() => fetchSlug()} />
-      {!!workout && (
-        <WorkoutComponent
-          key={slug}
-          navigation={props.navigation}
-          id={slug}
-          workout={workout}
-          onlineWorkout={true}
-        />
+      {!loading ? (
+        <>
+          {!!error && <Text style={GlobalStyles.errorText}>{error}</Text>}
+          <Input
+            prefix={
+              <MaterialCommunityIcons name="magnify" size={18} color="gray" />
+            }
+            placeholder="Workout ID"
+            value={slug}
+            onChangeText={(text) => setSlug(text)}
+            fontSize={18}
+            style={GlobalStyles.defaultInput}
+          />
+          <TouchableOpacity
+            style={GlobalStyles.defaultButton}
+            onPress={() => fetchSlug()}
+          >
+            <Text style={GlobalStyles.defaultButtonText}>
+              Search & Download
+            </Text>
+          </TouchableOpacity>
+          {!!workout && (
+            <WorkoutComponent
+              key={slug}
+              navigation={props.navigation}
+              id={slug}
+              workout={workout}
+              onlineWorkout={true}
+            />
+          )}
+        </>
+      ) : (
+        <Loading moreInfo="Trying to log you in." />
       )}
     </>
   );

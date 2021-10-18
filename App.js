@@ -30,23 +30,45 @@ import EditWorkout from "./components/main/Create/Workout/EditWorkout";
 import PlayWorkout from "./components/PlayWorkout";
 import ShareWorkout from "./components/main/Workouts/ShareWorkout";
 import DownloadUnlistedWorkout from "./components/main/Workouts/DownloadUnlistedWorkout";
+import Register from "./components/auth/Register";
+import AppInfo from "./components/main/Profile/AppInfo";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 
 function App() {
+  // mainly used to provide the Privacy Policy
+  const linking = {
+    prefixes: ["https://airworkout.vercel.app/"],
+    config: {
+      screens: {
+        Home: "",
+        PrivacyPolicy: "/privacypolicy",
+      },
+    },
+  };
+
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         <Stack.Navigator initialRouteName="Main">
           <Stack.Screen
             name="Main"
             component={Main}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="PlayExercise" component={PlayExercise} />
+          <Stack.Screen
+            name="PlayExercise"
+            component={PlayExercise}
+            options={({ route }) => ({ title: route.params.name })}
+          />
           <Stack.Screen name="Exercises" component={Exercises} />
           <Stack.Screen name="EquipmentPicker" component={EquipmentPicker} />
           <Stack.Screen name="ExercisePicker" component={ExercisePicker} />
           <Stack.Screen name="Create" component={Create} />
-          <Stack.Screen name="WorkoutPage" component={WorkoutPage} />
+          <Stack.Screen
+            name="WorkoutPage"
+            component={WorkoutPage}
+            options={({ route }) => ({ title: route.params.name })}
+          />
           <Stack.Screen name="EditExercise" component={EditExercise} />
           <Stack.Screen name="EditWorkout" component={EditWorkout} />
           <Stack.Screen name="PlayWorkout" component={PlayWorkout} />
@@ -55,6 +77,9 @@ function App() {
             name="DownloadUnlistedWorkout"
             component={DownloadUnlistedWorkout}
           />
+          <Stack.Screen name="Register" component={Register} />
+          <Stack.Screen name="AppInfo" component={AppInfo} />
+          <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

@@ -1,5 +1,14 @@
 import { StyleSheet, Platform, Dimensions } from "react-native";
-import { grayButtonColor, modalBackgroundColor } from "./GlobalColors";
+import {
+  defaultColor,
+  defaultErrorColor,
+  defaultLightColor,
+  defaultSuccessColor,
+  grayButtonColor,
+  modalBackgroundColor,
+} from "./GlobalColors";
+
+const defaultWidth = Dimensions.get("window").width - 30;
 
 export default StyleSheet.create({
   screenContainer: {
@@ -16,13 +25,14 @@ export default StyleSheet.create({
     alignItems: "center",
     backgroundColor: modalBackgroundColor,
     margin: 0,
+    // borderRadius: 10,
   },
   modalWebContainer: {
     flex: 1,
     backgroundColor: modalBackgroundColor,
   },
   modalContent: {
-    width: (2 / 3) * Dimensions.get("window").width,
+    width: (8 / 9) * Dimensions.get("window").width,
     backgroundColor: "white",
     paddingRight: 10,
     paddingLeft: 10,
@@ -31,6 +41,7 @@ export default StyleSheet.create({
     height: "auto",
     margin: "auto",
     position: "relative",
+    borderRadius: 10,
   },
   modalButtonContainer: {
     flexDirection: "row",
@@ -41,5 +52,93 @@ export default StyleSheet.create({
     backgroundColor: grayButtonColor,
     padding: 10,
     width: "45%",
+    borderRadius: 10,
+  },
+  defaultButton: {
+    backgroundColor: defaultColor,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    borderRadius: 10,
+    width: defaultWidth,
+    margin: 10,
+  },
+  defaultButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  defaultInput: {
+    margin: 15,
+    marginTop: 5,
+    marginBottom: 5,
+    width: defaultWidth,
+    alignSelf: "center",
+  },
+  successText: {
+    color: defaultSuccessColor,
+    fontSize: 18,
+    margin: 15,
+    marginTop: 5,
+    marginBottom: 5,
+    alignSelf: "center",
+  },
+  errorText: {
+    color: defaultErrorColor,
+    fontSize: 18,
+    margin: 15,
+    marginTop: 5,
+    marginBottom: 5,
+    alignSelf: "center",
+  },
+  optionButton: {
+    backgroundColor: defaultLightColor,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    width: Dimensions.get("window").width / 2 - 30,
+    borderRadius: 10,
+    // width: defaultWidth,
+    margin: 10,
+    flexDirection: "row",
+  },
+  optionButtonText: {
+    color: "black",
+    fontSize: 15,
+    // fontWeight: "bold",
+    marginLeft: 5,
+  },
+  optionButtonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignContent: "center",
+    // justifyContent: "space-between",
+    // width: defaultWidth,
+    alignSelf: "center",
+  },
+  modalTextTitle: {
+    fontWeight: "bold",
+    fontSize: 20,
+    textAlign: "center",
+  },
+  modalTextBody: {
+    fontStyle: "italic",
+    fontSize: 14,
+    margin: 10,
+  },
+  defaultDisabledButton: {
+    backgroundColor: "gray",
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    borderRadius: 10,
+    width: defaultWidth,
+    margin: 10,
+  },
+  link: {
+    color: defaultLightColor,
   },
 });

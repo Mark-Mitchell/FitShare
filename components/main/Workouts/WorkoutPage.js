@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocalWorkouts } from "../../../redux/actions";
@@ -11,6 +17,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ExerciseComponent from "../Exercises/ExerciseComponent";
 import TimeRepsPicker from "../Create/Workout/TimeRepsPicker";
 import DeleteConformation from "../../../assets/global functions/DeleteConformation";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
+import { defaultLightColor } from "../../../assets/styling/GlobalColors";
 
 function WorkoutPage(props) {
   // get workout from props or through react navigation
@@ -22,6 +30,9 @@ function WorkoutPage(props) {
 
   const [workout, setWorkout] = useState(propWorkout);
   const [exercisesComponent, setExercisesComponent] = useState(null);
+
+  const [consistsOfDefaultExercises, setConsistsOfDefaultExercises] =
+    useState(true);
 
   // Modal for TimeRepsPicker
   const [modalVisible, setModalVisible] = useState(false);
@@ -104,7 +115,12 @@ function WorkoutPage(props) {
   const setExercises = () => {
     let components = [];
     for (let i = 0; i < Object.keys(propWorkout.exercises).length; i++) {
-      if (exercises[propWorkout.exercises[i].info.id].hasOwnProperty("name")) {
+      if (
+        JSON.stringify(propWorkout.exercises[i].info.id).includes("d") ||
+        exercises[propWorkout.exercises[i].info.id].hasOwnProperty("name")
+      ) {
+        if (!JSON.stringify(propWorkout.exercises[i].info.id).includes("d"))
+          setConsistsOfDefaultExercises(false);
         const {
           defaultTimeBetweenExercises,
           defaultTimeBetweenSets,
@@ -143,6 +159,7 @@ function WorkoutPage(props) {
             reps={reps}
             handleTimePress={handleTimePress}
             handleRepsPress={handleRepsPress}
+            defaultExercise={true}
           />
         );
       }
@@ -203,41 +220,91 @@ function WorkoutPage(props) {
         body="Do you really want to delete this Workout?"
       />
 
-      <Text style={styles.title}>Title:</Text>
-      <Text>{propWorkout.generalInfo.title}</Text>
-      <Text style={styles.title}>Description:</Text>
-      <Text>{propWorkout.generalInfo.description}</Text>
-
       {isViewOnly && (
-        <>
-          <Pressable
+        <View
+          style={{
+            flexDirection: "row",
+            alignContent: "space-between",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={[GlobalStyles.optionButton, { width: "20%" }]}
             onPress={() =>
-              props.navigation.navigate("EditWorkout", { workout: propWorkout })
-            }
-          >
-            <MaterialCommunityIcons name="pencil" size={50} />
-          </Pressable>
-          <Pressable onPress={() => setDeleteModalVisible(true)}>
-            <MaterialCommunityIcons name="close" size={50} />
-          </Pressable>
-          <MaterialCommunityIcons
-            name="play"
-            size={50}
-            onPress={() =>
-              props.navigation.navigate("PlayWorkout", { workout: propWorkout })
-            }
-          />
-          <MaterialCommunityIcons
-            name="share"
-            size={50}
-            onPress={() =>
-              props.navigation.navigate("ShareWorkout", {
+              props.navigation.navigate("PlayWorkout", {
                 workout: propWorkout,
               })
             }
-          />
-        </>
+          >
+            <MaterialCommunityIcons name="play" size={14} />
+            <Text style={{ fontSize: 14, marginLeft: 5 }}>Train</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              GlobalStyles.optionButton,
+              {
+                width: "20%",
+                backgroundColor: consistsOfDefaultExercises
+                  ? defaultLightColor
+                  : "gray",
+              },
+            ]}
+            onPress={() => {
+              consistsOfDefaultExercises
+                ? props.navigation.navigate("ShareWorkout", {
+                    workout: propWorkout,
+                  })
+                : null;
+            }}
+            // style={{backgroundColor: consistsOfDefaultExercises ? "black" : "gray"}}
+          >
+            <MaterialCommunityIcons name="share" size={14} />
+            <Text style={{ fontSize: 14, marginLeft: 5 }}>Share</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() =>
+              props.navigation.navigate("EditWorkout", { workout: propWorkout })
+            }
+            style={[GlobalStyles.optionButton, { width: "20%" }]}
+          >
+            <MaterialCommunityIcons name="pencil" size={14} />
+            <Text style={{ fontSize: 14, marginLeft: 5 }}>Edit</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setDeleteModalVisible(true)}
+            style={[GlobalStyles.optionButton, { width: "20%" }]}
+          >
+            <MaterialCommunityIcons name="close" size={14} />
+            <Text style={{ fontSize: 14, marginLeft: 5 }}>Delete</Text>
+          </TouchableOpacity>
+        </View>
       )}
+
+      <View style={{ margin: 20 }}>
+        {!consistsOfDefaultExercises && (
+          <Text style={{ fontStyle: "italic", fontSize: 12 }}>
+            Workouts can only be shared if all of the exercises in it are
+            default exercises provided by the app. If you have created a custom
+            exercise that you have added to this workout you currently cannot
+            share it.
+          </Text>
+        )}
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.title}>Title: </Text>
+          <Text>{propWorkout.generalInfo.title}</Text>
+        </View>
+
+        {!!propWorkout.generalInfo.description && (
+          <>
+            <Text style={styles.title}>Description:</Text>
+            <Text>{propWorkout.generalInfo.description}</Text>
+          </>
+        )}
+      </View>
       {exercisesComponent}
     </>
   );

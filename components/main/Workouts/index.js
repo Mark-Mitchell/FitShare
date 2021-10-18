@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Button } from "react-native";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useSelector } from "react-redux";
 import checkNetworkConnection from "../../../assets/global functions/checkNetworkConnection";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
 
 import WorkoutComponent from "./WorkoutComponent";
 
@@ -44,19 +45,23 @@ function Workout(props) {
   return (
     <SafeAreaView>
       <ScrollView>
-        {workoutComponents}
-        <Button
-          title={
+        <TouchableOpacity
+          style={
             isConnected
-              ? "Download Online Workout"
-              : "Please connect to the internet to seach for an online workout"
+              ? GlobalStyles.defaultButton
+              : GlobalStyles.defaultDisabledButton
           }
           onPress={() =>
             isConnected
               ? props.navigation.navigate("DownloadUnlistedWorkout")
               : null
           }
-        />
+        >
+          <Text style={GlobalStyles.defaultButtonText}>
+            Search for Online Workout
+          </Text>
+        </TouchableOpacity>
+        {workoutComponents}
       </ScrollView>
     </SafeAreaView>
   );
