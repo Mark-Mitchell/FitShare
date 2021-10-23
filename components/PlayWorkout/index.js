@@ -133,12 +133,6 @@ function PlayWorkout(props) {
           currentExerciseInfo={`${currentIndex + 1}/${idArray.length}`}
         />
       )}
-      <Text>
-        Current Set: {currentSet}/{sets}
-      </Text>
-      <Text>
-        Exercise: {currentIndex + 1}/{idArray.length}
-      </Text>
     </>
   );
 }

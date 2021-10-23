@@ -113,7 +113,6 @@ function Exercises(props) {
             Long press on the exercises you wish to add to your workout
           </Text>
         )}
-        {defaultExercises ? defaultExerciseComponents : exerciseComponents}
         {exerciseSelectable && (
           <TouchableOpacity
             style={GlobalStyles.defaultButton}
@@ -122,6 +121,7 @@ function Exercises(props) {
             <Text style={GlobalStyles.defaultButtonText}>Save</Text>
           </TouchableOpacity>
         )}
+        {defaultExercises ? defaultExerciseComponents : exerciseComponents}
       </ScrollView>
     </SafeAreaView>
   );

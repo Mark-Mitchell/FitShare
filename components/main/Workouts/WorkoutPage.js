@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -203,7 +203,7 @@ function WorkoutPage(props) {
   }, [toBeDeleted]);
 
   return (
-    <>
+    <ScrollView>
       <TimeRepsPicker
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -306,7 +306,7 @@ function WorkoutPage(props) {
         )}
       </View>
       {exercisesComponent}
-    </>
+    </ScrollView>
   );
 }
 
