@@ -43,8 +43,8 @@ function Workout(props) {
   }, []);
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }}>
         <TouchableOpacity
           style={
             isConnected

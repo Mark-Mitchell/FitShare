@@ -92,8 +92,8 @@ function Exercises(props) {
   );
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }}>
         <View style={styles.switch}>
           <Text>Default Exercises</Text>
           <Switch

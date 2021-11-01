@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Input } from "react-native-magnus";
+// import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -41,8 +42,6 @@ function Login(props) {
     if (errors.length === 0) {
       try {
         setLoading(true);
-        console.log(email);
-        console.log(password);
 
         let response = await fetch(apiURL + "api/auth/signin", {
           method: "POST",
@@ -92,7 +91,8 @@ function Login(props) {
   };
 
   return (
-    <>
+    <View style={{ flex: 1, alignContent: "center", justifyContent: "center" }}>
+      {/* <ScrollView style={{ flex: 1 }}> */}
       {!loading ? (
         <View
           style={{
@@ -147,7 +147,7 @@ function Login(props) {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => props.navigation.navigate("ForgotPassword")}
             >
               <Text
@@ -158,7 +158,7 @@ function Login(props) {
               >
                 Forgot your password? Reset it here.
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               onPress={() => login()}
@@ -171,7 +171,8 @@ function Login(props) {
       ) : (
         <Loading moreInfo="Logging you in..." />
       )}
-    </>
+      {/* </ScrollView> */}
+    </View>
   );
 }
 

@@ -93,9 +93,9 @@ function Profile(props) {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       {!loading ? (
-        <ScrollView>
+        <ScrollView style={{ flex: 1 }}>
           {!!(userInfo.hasOwnProperty("loggedIn") && userInfo.loggedIn) ? (
             <ProfilePage
               setUserInfo={setUserInfo}

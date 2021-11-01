@@ -31,7 +31,7 @@ function ProfilePage(props) {
           {props.user.email}
         </Text>
       </View>
-      <View style={{ flexDirection: "row" }}>
+      {/* <View style={{ flexDirection: "row" }}>
         <TouchableOpacity
           onPress={() => props.navigation.navigate("UpdateEmail")}
           style={GlobalStyles.optionButton}
@@ -47,7 +47,7 @@ function ProfilePage(props) {
             Change your Username
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
       <TouchableOpacity
         style={GlobalStyles.defaultButton}
         onPress={() => logout()}
