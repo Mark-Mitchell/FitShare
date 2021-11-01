@@ -41,6 +41,8 @@ function Login(props) {
     if (errors.length === 0) {
       try {
         setLoading(true);
+        console.log(email);
+        console.log(password);
 
         let response = await fetch(apiURL + "api/auth/signin", {
           method: "POST",
@@ -142,6 +144,19 @@ function Login(props) {
                 ]}
               >
                 Don't have an account yet? Register here.
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate("ForgotPassword")}
+            >
+              <Text
+                style={[
+                  GlobalStyles.link,
+                  { textAlign: "center", paddingTop: 10 },
+                ]}
+              >
+                Forgot your password? Reset it here.
               </Text>
             </TouchableOpacity>
 

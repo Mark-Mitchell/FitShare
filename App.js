@@ -33,6 +33,9 @@ import DownloadUnlistedWorkout from "./components/main/Workouts/DownloadUnlisted
 import Register from "./components/auth/Register";
 import AppInfo from "./components/main/Profile/AppInfo";
 import PrivacyPolicy from "./components/PrivacyPolicy";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import UpdateEmail from "./components/main/Profile/UpdateEmail";
+import UpdateUsername from "./components/main/Profile/UpdateUsername";
 
 function App() {
   // mainly used to provide the Privacy Policy
@@ -81,6 +84,9 @@ function App() {
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="AppInfo" component={AppInfo} />
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="UpdateEmail" component={UpdateEmail} />
+          <Stack.Screen name="UpdateUsername" component={UpdateUsername} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

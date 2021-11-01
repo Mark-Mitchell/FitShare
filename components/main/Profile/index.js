@@ -5,6 +5,7 @@ import {
   Platform,
   ScrollView,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,13 +16,13 @@ import { useDispatch } from "react-redux";
 import { fetchLocalData, fetchLocalWorkouts } from "../../../redux/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import Test from "./Test";
 import Login from "../../auth/Login";
 import ProfilePage from "./ProfilePage";
 
 import checkNetworkConnection from "../../../assets/global functions/checkNetworkConnection";
 import getUserInfo from "../../auth/getUserInfo";
 import Loading from "../../Loading";
+import GlobalStyles from "../../../assets/styling/GlobalStyles";
 
 function Profile(props) {
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,6 @@ function Profile(props) {
 
   const [userInfo, setUserInfo] = useState({
     loggedIn: false,
-    // user: { username: "HARD CODE", email: "DEV" },
   });
 
   const getNetworkState = async () => {
@@ -97,7 +97,11 @@ function Profile(props) {
       {!loading ? (
         <ScrollView>
           {!!(userInfo.hasOwnProperty("loggedIn") && userInfo.loggedIn) ? (
-            <ProfilePage setUserInfo={setUserInfo} user={userInfo.user} />
+            <ProfilePage
+              setUserInfo={setUserInfo}
+              user={userInfo.user}
+              navigation={props.navigation}
+            />
           ) : (
             <>
               {isdeviceSupported ? (
@@ -120,8 +124,6 @@ function Profile(props) {
                       </Text>
                     </>
                   )}
-
-                  {/* <Test /> */}
 
                   <Login
                     navigation={props.navigation}
@@ -154,7 +156,7 @@ function Profile(props) {
               size={14}
               style={{ marginRight: 5 }}
             />
-            <Text>More information on the app.</Text>
+            <Text>About the App (Information, Support, Feedback)</Text>
           </TouchableOpacity>
         </ScrollView>
       ) : (
